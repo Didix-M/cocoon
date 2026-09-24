@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F5ECDA; }
+  a { color:#9C6240; text-decoration:none; }
+  a:hover { color:#3A322B; }
+  *:focus-visible { outline:2.5px solid #9C6240; outline-offset:3px; }
+  input, textarea, button { font-family:Quicksand,sans-serif; }
+  @keyframes rvIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  @keyframes rvPulse { 0%,100% { opacity:.45; } 50% { opacity:.9; } }
+  [data-rv-screen] { animation: rvIn .42s cubic-bezier(.2,.7,.3,1) both; }
+  [data-rv-skel] { animation: rvPulse 1.3s ease-in-out infinite; }
+  @media (max-width: 860px) {
+    [data-rv-cell] { min-height:40px !important; }
+    [data-rv-choice] { grid-template-columns: minmax(0,1fr) !important; }
+    [data-rv-two] { grid-template-columns: minmax(0,1fr) !important; }
+    [data-rv-rail] { font-size:11px !important; }
+  }
+  @media (max-width: 560px) {
+    [data-rv-paysel] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+    [data-rv-times] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+    [data-rv-evgrid] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+    [data-rv-railstep] span[data-rv-label] { display:none; }
+  }
+  @media (max-width: 860px) { [data-rv-evdate] { grid-template-columns: minmax(0,1fr) !important; } }
+  @media (max-height: 780px) {
+    [data-rv-screen] h1 { font-size:27px !important; }
+    [data-rv-cal] { max-width:336px !important; }
+    [data-rv-cell] { min-height:32px !important; font-size:14px !important; }
+  }
+  @media (min-width: 861px) {
+    [data-rv-paygrid] { grid-template-columns:1.02fr .98fr !important; }
+    [data-rv-waivergrid] { grid-template-columns:1fr 1fr !important; }
+    [data-rv-onbgrid] { grid-template-columns:1fr 1fr !important; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+</style>
+<script src="./scroll-pro.js"></script>
+</helmet>
+
+<div style="height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#F5ECDA;font-family:Quicksand,sans-serif;color:#3A322B">
+
+  <header style="flex:none;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px clamp(16px,4vw,40px);background:rgba(245,236,218,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(58,50,43,.08)">
+    <button type="button" onClick="{{ goBack }}" aria-label="Volver" style="display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 10px;border:1px solid rgba(58,50,43,.18);border-radius:999px;background:#FDFAF4;color:#3A322B;font-size:14px;font-weight:600;cursor:pointer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9C6240" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      {{ backLabel }}
+    </button>
+    <div style="display:inline-flex;align-items:center"><img src="uploads/cocoon-logo.png" alt="Cocoon" style="height:24px;width:auto;display:block"></div>
+    <a href="./Cocoon Home.dc.html" aria-label="Salir de la reserva" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:999px;border:1px solid rgba(58,50,43,.18);background:#FDFAF4;color:#6D6D6D;font-size:15px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></a>
+  </header>
+
+  <main data-scrollpro="vertical" style="flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:18px">
+
+  <sc-if value="{{ showRail }}" hint-placeholder-val="{{ false }}">
+    <div data-rv-rail="" style="width:100%;box-sizing:border-box;max-width:calc({{ shellWidth }} + 2 * clamp(16px,4vw,40px));margin:0 auto;padding:14px clamp(16px,4vw,40px) 0;font-size:12px;letter-spacing:.1em;font-weight:700;color:#6D6D6D">
+      <div style="display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px">
+        <sc-for list="{{ rail }}" as="s" hint-placeholder-count="4">
+          <div data-rv-railstep="" style="display:flex;flex-direction:column;gap:8px">
+            <div style="height:3px;border-radius:999px;background:{{ s.bg }}"></div>
+            <span data-rv-label="" style="color:{{ s.color }}">{{ s.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════ SCREEN: ¿Qué quieres hacer? ══════════ -->
+  <sc-if value="{{ isChoose }}" hint-placeholder-val="{{ true }}">
+    <section data-rv-screen="" style="max-width:1010px;margin:0 auto;padding:clamp(16px,2.6vw,28px) clamp(16px,4vw,40px) 24px">
+      <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#9C6240">RESERVAR</p>
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(28px,4vw,42px);line-height:1.08;letter-spacing:-.01em;max-width:16ch">¿Qué quieres hacer en Cocoon?</h1>
+      <p style="margin:9px 0 0;font-size:16px;line-height:1.55;color:#6D6D6D;max-width:46ch;text-wrap:pretty">Elige por dónde empezar. Te guiamos paso a paso y solo te pedimos lo que todavía no sabemos de ti.</p>
+
+      <div data-rv-choice="" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.2vw,24px);margin-top:clamp(14px,1.8vw,20px)">
+        <button type="button" onClick="{{ pickDay }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:14px;text-align:left;padding:clamp(24px,3vw,34px);border:1.5px solid rgba(58,50,43,.14);border-radius:30px;background:#FDFAF4;cursor:pointer;min-height:186px;transition:border-color .2s,transform .2s,box-shadow .2s" style-hover="border-color:#9C6240;transform:translateY(-3px);box-shadow:0 18px 40px -26px rgba(58,50,43,.4)">
+          <span style="display:flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:20px;background:#9CB4C7">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FDFAF4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+          </span>
+          <span style="font-family:'EB Garamond',serif;font-size:30px;line-height:1.1">Day Pass</span>
+          <span style="font-size:15.5px;line-height:1.6;color:#6D6D6D">Day Pass · Una visita, varios días o un rango completo de fechas.</span>
+          <span style="margin-top:auto;display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:700;letter-spacing:.06em;color:#9C6240">RESERVAR Y PAGAR ONLINE<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+        </button>
+
+        <button type="button" onClick="{{ pickEvent }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:14px;text-align:left;padding:clamp(24px,3vw,34px);border:1.5px solid rgba(58,50,43,.14);border-radius:30px;background:#FDFAF4;cursor:pointer;min-height:186px;transition:border-color .2s,transform .2s,box-shadow .2s" style-hover="border-color:#9C6240;transform:translateY(-3px);box-shadow:0 18px 40px -26px rgba(58,50,43,.4)">
+          <span style="display:flex;align-items:center;justify-content:center;width:58px;height:58px;border-radius:20px;background:#D4A34E">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FDFAF4" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
+          </span>
+          <span style="font-family:'EB Garamond',serif;font-size:30px;line-height:1.1">Celebraciones</span>
+          <span style="font-size:15.5px;line-height:1.6;color:#6D6D6D">Cumpleaños · Eventos privados: bautizo, baby shower, despedida de soltera o gender reveal.</span>
+          <span style="margin-top:auto;display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:700;letter-spacing:.06em;color:#9C6240">ENVIAR SOLICITUD<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+        </button>
+      </div>
+
+      <p style="margin:26px 0 0;font-size:14.5px;line-height:1.6;color:#6D6D6D">Elige tu fecha y cuéntanos lo básico. Revisamos disponibilidad, te contactamos y la fecha se separa con un depósito de $400 cuando la propuesta esté lista.</p>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ DAY PASS · FECHAS ══════════ -->
+  <sc-if value="{{ isDate }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:1050px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">¿Cuándo quieren venir?</h1>
+      <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D;max-width:48ch">Puedes elegir un día, varios días o un rango de fechas.</p>
+
+      <p style="margin:10px 0 0;font-size:15px;line-height:1.5;color:#6D6D6D">{{ calHint }}</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;max-width:430px" data-rv-cal="">
+        <div style="background:#FDFAF4;border:1px solid rgba(58,50,43,.1);border-radius:22px;padding:clamp(12px,1.4vw,16px)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <button type="button" onClick="{{ cal.onPrev }}" aria-label="Mes anterior" style="flex:none;width:40px;height:40px;border-radius:999px;border:1px solid {{ cal.prevBorder }};background:#FDFAF4;color:#9C6240;cursor:{{ cal.prevCursor }};opacity:{{ cal.prevOpacity }};display:flex;align-items:center;justify-content:center;font-size:17px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <select value="{{ cal.month }}" onChange="{{ cal.onMonth }}" aria-label="Mes" style="flex:1 1 auto;min-width:0;min-height:40px;padding:0 10px;border:1px solid rgba(58,50,43,.16);border-radius:12px;background:#FFFDF8;font-family:'EB Garamond',serif;font-size:19px;color:#3A322B;cursor:pointer">
+              <sc-for list="{{ cal.monthOpts }}" as="m" hint-placeholder-count="12">
+                <option value="{{ m.value }}">{{ m.label }}</option>
+              </sc-for>
+            </select>
+            <select value="{{ cal.year }}" onChange="{{ cal.onYear }}" aria-label="Año" style="flex:none;min-height:40px;padding:0 8px;border:1px solid rgba(58,50,43,.16);border-radius:12px;background:#FFFDF8;font-family:'EB Garamond',serif;font-size:19px;color:#3A322B;cursor:pointer">
+              <sc-for list="{{ cal.yearOpts }}" as="y" hint-placeholder-count="2">
+                <option value="{{ y.value }}">{{ y.label }}</option>
+              </sc-for>
+            </select>
+            <button type="button" onClick="{{ cal.onNext }}" aria-label="Mes siguiente" style="flex:none;width:40px;height:40px;border-radius:999px;border:1px solid rgba(58,50,43,.18);background:#FDFAF4;color:#9C6240;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:4px">
+            <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+              <div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;color:#6D6D6D;padding:2px 0">{{ w }}</div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px">
+            <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="35">
+              <button type="button" data-rv-cell onClick="{{ c.onPick }}" disabled="{{ c.disabled }}" aria-label="{{ c.aria }}" aria-pressed="{{ c.on }}" title="{{ c.title }}" style="position:relative;aspect-ratio:1;min-height:38px;border:1.5px solid {{ c.border }};border-radius:{{ c.radius }};background:{{ c.bg }};color:{{ c.color }};font-family:Quicksand,sans-serif;font-size:15px;font-weight:{{ c.weight }};cursor:{{ c.cursor }};text-decoration:{{ c.strike }};display:flex;align-items:center;justify-content:center;padding:0;visibility:{{ c.vis }}">{{ c.day }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ rangeSuggest }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ fillRange }}" style="align-self:flex-start;margin-top:12px;min-height:46px;padding:0 20px;border:1.5px solid #9C6240;border-radius:999px;background:#FDFAF4;color:#9C6240;font-size:15px;font-weight:700;cursor:pointer">{{ rangeSuggest }}</button>
+      </sc-if>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:13px;color:#6D6D6D">
+        <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:5px;background:#9C6240"></span>Seleccionado</span>
+        <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:5px;background:#EFE6D4;border:1px solid rgba(58,50,43,.12)"></span>Disponible</span>
+        <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:5px;background:#F5ECDA;border:1px dashed rgba(58,50,43,.3)"></span>Cerrado o sin espacio</span>
+      </div>
+      <p style="margin:14px 0 0;font-size:14.5px;line-height:1.55;color:#6D6D6D;max-width:58ch">Day Pass $16 por niño de lunes a viernes y $18 los sábados y domingos. Desde 3 pases en la misma reserva aplicamos 5% de descuento automático, sin códigos.</p>
+      <sc-if value="{{ dateNote }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:16px 0 0;padding:14px 18px;border-radius:18px;background:#FDFAF4;border:1px solid rgba(212,163,78,.5);font-size:15px;line-height:1.55;color:#3A322B">{{ dateNote }}</p>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ DAY PASS · HORA ══════════ -->
+  <sc-if value="{{ isTime }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:940px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">¿A qué hora llegan?</h1>
+      <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">{{ timeSubtitle }}</p>
+
+      <sc-if value="{{ loadingSlots }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px">
+          <p style="margin:0 0 14px;font-size:14.5px;color:#6D6D6D">Revisando disponibilidad…</p>
+          <div data-rv-times="" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+            <sc-for list="{{ skeletons }}" as="s" hint-placeholder-count="6">
+              <div data-rv-skel="" style="height:68px;border-radius:20px;background:#EFE6D4"></div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ slotsReady }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px">
+          <sc-if value="{{ timeError }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="margin:0 0 18px;padding:14px 18px;border-radius:18px;background:#FDF3E7;border:1px solid #D4A34E;font-size:15px;line-height:1.55">{{ timeError }}</p>
+          </sc-if>
+          <div data-rv-times="" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+            <sc-for list="{{ slots }}" as="s" hint-placeholder-count="9">
+              <button type="button" onClick="{{ s.onPick }}" disabled="{{ s.disabled }}" aria-pressed="{{ s.on }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:68px;padding:16px 18px;border:1.5px solid {{ s.border }};border-radius:20px;background:{{ s.bg }};color:{{ s.color }};cursor:{{ s.cursor }};text-align:left">
+                <span style="font-size:19px;font-weight:600">{{ s.label }}</span>
+                <span style="font-size:13.5px;color:{{ s.subColor }}">{{ s.sub }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ manyDays }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:22px;padding:18px 20px;border-radius:22px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1)">
+              <div data-rv-two="" style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center">
+                <p style="margin:0;font-size:15.5px;line-height:1.55">{{ sameTimeLine }}</p>
+                <button type="button" onClick="{{ togglePerDay }}" style="min-height:44px;padding:0 18px;border-radius:999px;border:1.5px solid #9C6240;background:#FDFAF4;color:#9C6240;font-size:14.5px;font-weight:700;cursor:pointer">{{ perDayLabel }}</button>
+              </div>
+              <sc-if value="{{ perDay }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;border-top:1px solid rgba(58,50,43,.1);padding-top:18px">
+                  <sc-for list="{{ perDayRows }}" as="r" hint-placeholder-count="3">
+                    <div data-rv-two="" style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center">
+                      <span style="font-size:15.5px">{{ r.label }}</span>
+                      <div data-scrollpro="horizontal" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:18px;max-width:100%">
+                        <sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="5">
+                          <button type="button" onClick="{{ o.onPick }}" disabled="{{ o.disabled }}" aria-pressed="{{ o.on }}" style="flex:none;min-height:44px;padding:0 14px;border:1.5px solid {{ o.border }};border-radius:999px;background:{{ o.bg }};color:{{ o.color }};font-size:14.5px;font-weight:600;cursor:{{ o.cursor }}">{{ o.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ DAY PASS · FAMILIA ══════════ -->
+  <sc-if value="{{ isFamily }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:1000px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+
+      <sc-if value="{{ famIdentify }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">¿Quién viene a Cocoon?</h1>
+          <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D;max-width:44ch">Ingresa tu email o teléfono para continuar. Tus fechas y tu hora ya están guardadas.</p>
+          <div style="margin-top:16px;max-width:460px">
+            <label for="rv-id" style="display:block;font-size:13px;font-weight:700;letter-spacing:.1em;color:#6D6D6D;margin-bottom:8px">EMAIL O TELÉFONO</label>
+            <input id="rv-id" type="text" value="{{ idValue }}" onChange="{{ onIdChange }}" placeholder="denise@ejemplo.com" autocomplete="email" style="width:100%;box-sizing:border-box;min-height:54px;padding:0 18px;border:1.5px solid {{ idBorder }};border-radius:16px;background:#FDFAF4;font-size:16px;color:#3A322B">
+            <sc-if value="{{ idError }}" hint-placeholder-val="{{ false }}">
+              <p role="alert" style="margin:10px 0 0;font-size:14.5px;color:#9C6240">{{ idError }}</p>
+            </sc-if>
+            <p style="margin:14px 0 0;font-size:13.5px;line-height:1.5;color:#6D6D6D">Demo: <strong style="color:#6D6D6D">denise@ejemplo.com</strong> es una familia ya registrada. Cualquier otro dato abre el onboarding.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ famOtp }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-if value="{{ otpEyebrow }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#BAB25A">{{ otpEyebrow }}</p>
+          </sc-if>
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">{{ otpTitle }}</h1>
+          <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">Enviamos un código de 6 dígitos a <strong style="color:#3A322B">{{ idValue }}</strong>. Sin contraseñas.</p>
+          <sc-if value="{{ otpKeepNote }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:10px 0 0;font-size:15px;line-height:1.5;color:#3A322B">{{ otpKeepNote }}</p>
+          </sc-if>
+          <div style="margin-top:16px;max-width:420px">
+            <label for="rv-otp" style="display:block;font-size:13px;font-weight:700;letter-spacing:.1em;color:#6D6D6D;margin-bottom:8px">CÓDIGO</label>
+            <input id="rv-otp" type="text" inputmode="numeric" maxlength="6" value="{{ otpValue }}" onChange="{{ onOtpChange }}" placeholder="••••••" style="width:100%;box-sizing:border-box;min-height:58px;padding:0 18px;border:1.5px solid {{ otpBorder }};border-radius:16px;background:#FDFAF4;font-size:24px;letter-spacing:.34em;font-weight:600;color:#3A322B">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:12px">
+              <span style="font-size:14.5px;color:#6D6D6D">{{ otpTimer }}</span>
+              <button type="button" onClick="{{ resendOtp }}" style="min-height:40px;padding:0 4px;border:0;background:none;color:#9C6240;font-size:14.5px;font-weight:700;text-decoration:underline;cursor:pointer">Reenviar código</button>
+            </div>
+            <sc-if value="{{ otpError }}" hint-placeholder-val="{{ false }}">
+              <p role="alert" style="margin:14px 0 0;padding:14px 18px;border-radius:16px;background:#FDF3E7;border:1px solid #D4A34E;font-size:15px;line-height:1.5">{{ otpError }}</p>
+            </sc-if>
+            <p style="margin:14px 0 0;font-size:13.5px;color:#6D6D6D">Demo: cualquier código de 6 dígitos funciona. <strong style="color:#6D6D6D">000000</strong> simula un código incorrecto.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ famFirst }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:52ch">
+          <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#9C6240">PRIMERA VISITA</p>
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">Parece que es su primera visita 💛</h1>
+          <p style="margin:10px 0 0;font-size:16px;line-height:1.6;color:#6D6D6D">Creemos tu familia Cocoon. Solo tomará un momento y tendrás todo listo para futuras visitas.</p>
+          <div style="margin-top:18px;padding:18px 20px;border-radius:22px;background:#FDFAF4;border:1px solid rgba(58,50,43,.12);display:flex;flex-direction:column;gap:10px">
+            <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">YA TIENES GUARDADO</p>
+            <sc-for list="{{ keptRows }}" as="r" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:130px 1fr;gap:6px 16px;align-items:baseline">
+                <span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#6D6D6D">{{ r.label }}</span>
+                <span style="font-size:16px;line-height:1.5;color:#3A322B">{{ r.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ famKnown }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#BAB25A">{{ knownEyebrow }}</p>
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">¿Quién viene esta vez?</h1>
+          <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">{{ knownSub }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+            <sc-for list="{{ famChips }}" as="c" hint-placeholder-count="3">
+              <span style="display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:{{ c.bg }};border:1px solid {{ c.border }};font-size:13.5px;font-weight:600;color:{{ c.color }}">{{ c.label }}</span>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+            <sc-for list="{{ savedKids }}" as="k" hint-placeholder-count="2">
+              <button type="button" onClick="{{ k.onToggle }}" aria-pressed="{{ k.on }}" style="display:flex;align-items:flex-start;gap:16px;padding:18px 20px;border:1.5px solid {{ k.border }};border-radius:22px;background:{{ k.bg }};cursor:pointer;text-align:left">
+                <span style="flex:none;width:24px;height:24px;margin-top:2px;border-radius:8px;border:1.5px solid {{ k.markBorder }};background:{{ k.markBg }};color:#FDFAF4;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700"><sc-if value="{{ k.on }}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if></span>
+                <span style="flex:1 1 auto;min-width:0">
+                  <span style="display:block;font-size:18px;font-weight:600;color:#3A322B">{{ k.name }}</span>
+                  <span style="display:block;font-size:14.5px;color:#6D6D6D;margin-top:2px">{{ k.meta }}</span>
+                  <sc-if value="{{ k.warn }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:block;margin-top:8px;font-size:14.5px;line-height:1.45;font-weight:600;color:#9C6240">{{ k.warn }}</span>
+                  </sc-if>
+                </span>
+              </button>
+            </sc-for>
+            <button type="button" onClick="{{ addKidKnown }}" style="align-self:flex-start;min-height:46px;padding:0 20px;border:1.5px dashed rgba(58,50,43,.3);border-radius:999px;background:none;color:#9C6240;font-size:15px;font-weight:700;cursor:pointer">+ Agregar otro niño</button>
+          </div>
+          <div style="margin-top:18px;padding:18px 20px;border-radius:22px;background:#FDFAF4;border:1px solid rgba(58,50,43,.12);display:flex;flex-direction:column;gap:10px;max-width:560px">
+            <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">LO QUE VAS A PAGAR</p>
+            <sc-for list="{{ priceRows }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;font-size:15.5px">
+                <span style="color:#6D6D6D">{{ p.label }}</span>
+                <span style="font-weight:600">{{ p.value }}</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-top:10px;border-top:1px solid rgba(58,50,43,.12)">
+              <span style="font-family:'EB Garamond',serif;font-size:21px">Total</span>
+              <span style="font-family:'EB Garamond',serif;font-size:24px;color:#9C6240">{{ total }}</span>
+            </div>
+          </div>
+          <sc-if value="{{ kidsError }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="margin:18px 0 0;font-size:15px;color:#9C6240">{{ kidsError }}</p>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ famForm }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#9C6240">{{ onbEyebrow }}</p>
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">{{ onbTitle }}</h1>
+          <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D;max-width:50ch">{{ onbSub }}</p>
+
+          <div data-rv-onbgrid style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;margin-top:16px">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">TU PEQUEÑO</p>
+            <sc-for list="{{ newKids }}" as="k" hint-placeholder-count="1">
+              <div style="padding:20px;border:1px solid rgba(58,50,43,.12);border-radius:22px;background:#FDFAF4">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
+                  <span style="font-family:'EB Garamond',serif;font-size:20px">{{ k.title }}</span>
+                  <button type="button" onClick="{{ k.onRemove }}" style="display:{{ k.removeDisplay }};min-height:40px;padding:0 12px;border:0;background:none;color:#6D6D6D;font-size:14px;text-decoration:underline;cursor:pointer">Quitar</button>
+                </div>
+                <div data-rv-two="" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+                  <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NOMBRE
+                    <input type="text" value="{{ k.nombre }}" onChange="{{ k.onNombre }}" style="min-height:50px;padding:0 16px;border:1.5px solid {{ k.nombreBorder }};border-radius:14px;background:#FFFDF8;font-size:16px;font-weight:500;color:#3A322B">
+                  </label>
+                  <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">APELLIDO
+                    <input type="text" value="{{ k.apellido }}" onChange="{{ k.onApellido }}" style="min-height:50px;padding:0 16px;border:1.5px solid {{ k.apellidoBorder }};border-radius:14px;background:#FFFDF8;font-size:16px;font-weight:500;color:#3A322B">
+                  </label>
+                  <div style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">FECHA DE NACIMIENTO
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:8px">
+                      <select value="{{ k.dia }}" onChange="{{ k.onDia }}" style="min-height:50px;padding:0 10px;border:1.5px solid {{ k.nacimientoBorder }};border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+                        <option value="">Día</option>
+                        <sc-for list="{{ k.dayOptions }}" as="d" hint-placeholder-count="31">
+                          <option value="{{ d }}">{{ d }}</option>
+                        </sc-for>
+                      </select>
+                      <select value="{{ k.mes }}" onChange="{{ k.onMes }}" style="min-height:50px;padding:0 10px;border:1.5px solid {{ k.nacimientoBorder }};border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+                        <option value="">Mes</option>
+                        <sc-for list="{{ k.monthOptions }}" as="m" hint-placeholder-count="12">
+                          <option value="{{ m }}">{{ m }}</option>
+                        </sc-for>
+                      </select>
+                      <select value="{{ k.anio }}" onChange="{{ k.onAnio }}" style="min-height:50px;padding:0 10px;border:1.5px solid {{ k.nacimientoBorder }};border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+                        <option value="">Año</option>
+                        <sc-for list="{{ k.yearOptions }}" as="y" hint-placeholder-count="20">
+                          <option value="{{ y }}">{{ y }}</option>
+                        </sc-for>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <button type="button" onClick="{{ addKidNew }}" style="align-self:flex-start;min-height:46px;padding:0 20px;border:1.5px dashed rgba(58,50,43,.3);border-radius:999px;background:none;color:#9C6240;font-size:15px;font-weight:700;cursor:pointer">+ Agregar otro niño</button>
+          </div>
+
+          <sc-if value="{{ showAdult }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">ADULTO RESPONSABLE</p>
+            <p style="margin:0;font-size:14.5px;line-height:1.5;color:#6D6D6D">{{ adultHint }}</p>
+            <div style="padding:20px;border:1px solid rgba(58,50,43,.12);border-radius:22px;background:#FDFAF4">
+              <div data-rv-two="" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                <sc-for list="{{ adultFields }}" as="f" hint-placeholder-count="4">
+                  <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">{{ f.label }}
+                    <input type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" inputmode="{{ f.mode }}" style="min-height:50px;padding:0 16px;border:1.5px solid {{ f.border }};border-radius:14px;background:#FFFDF8;font-size:16px;font-weight:500;color:#3A322B">
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+          </div>
+
+          <sc-if value="{{ formError }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="margin:16px 0 0;padding:16px 18px;border-radius:18px;background:#FDF3E7;border:1px solid #D4A34E;font-size:15px;line-height:1.55">{{ formError }}</p>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ famWaiver }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#9C6240">CREA TU FAMILIA COCOON · 2 DE 2</p>
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">Consentimiento y firma</h1>
+          <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">{{ waiverIntro }}</p>
+          <div data-rv-waivergrid style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;margin-top:16px">
+            <div style="padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4">
+
+            <div style="display:flex;align-items:center;gap:12px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BAB25A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+              <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">CONSENTIMIENTO Y WAIVER · {{ waiverVersion }}</p>
+            </div>
+            <h2 style="margin:14px 0 0;font-family:'EB Garamond',serif;font-weight:400;font-size:26px;line-height:1.2">Consentimiento parental y exoneración de responsabilidad</h2>
+            <div data-scrollpro="vertical" style="margin-top:14px;max-height:150px;overflow-y:auto;padding:16px 30px 16px 18px;border-radius:18px;background:#FFFDF8;border:1px solid rgba(58,50,43,.1);font-size:15px;line-height:1.65;color:#6D6D6D">
+              <p style="margin:0 0 12px"><strong style="color:#3A322B">Texto legal pendiente de Cocoon.</strong> Este bloque mostrará el consentimiento y waiver oficial tal como lo entregue el equipo legal, sin modificaciones.</p>
+              <p style="margin:0 0 12px">El contenedor está preparado para texto largo: se desplaza con barra de progreso, mantiene un ancho de lectura cómodo y no bloquea el avance del formulario.</p>
+              <p style="margin:0">Al confirmar, se registrará la firma, la fecha y hora, la identidad del adulto responsable, los niños asociados y la versión del documento.</p>
+            </div>
+            <button type="button" onClick="{{ toggleWaiver }}" aria-pressed="{{ waiverOn }}" style="display:flex;align-items:flex-start;gap:14px;width:100%;margin-top:18px;padding:16px 18px;border:1.5px solid {{ waiverBorder }};border-radius:18px;background:{{ waiverBg }};cursor:pointer;text-align:left">
+              <span style="flex:none;width:24px;height:24px;border-radius:8px;border:1.5px solid {{ waiverMarkBorder }};background:{{ waiverMarkBg }};color:#FDFAF4;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700"><sc-if value="{{ waiverOn }}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if></span>
+              <span style="font-size:15.5px;line-height:1.55;color:#3A322B">He leído y acepto el consentimiento y waiver de Cocoon.</span>
+            </button>
+            </div>
+            <div style="padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4">
+            <div>
+              <p style="margin:0;font-family:'EB Garamond',serif;font-size:22px">Firma del adulto responsable</p>
+              <p style="margin:8px 0 14px;font-size:15px;line-height:1.55;color:#6D6D6D">Firma tal como aparece en tu cédula. Funciona con dedo, mouse o stylus.</p>
+              <div style="position:relative;border:1.5px solid {{ sigBorder }};border-radius:20px;background:#FFFDF8;overflow:hidden">
+                <canvas ref="{{ sigRef }}" aria-label="Área de firma" style="display:block;width:100%;height:150px;touch-action:none;cursor:crosshair"></canvas>
+                <span style="position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:14.5px;color:#C4B8A4;pointer-events:none;display:{{ sigHintDisplay }}">Firma aquí</span>
+                <span style="position:absolute;left:24px;right:24px;bottom:18px;height:1px;background:rgba(58,50,43,.14);pointer-events:none"></span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+                <button type="button" onClick="{{ clearSig }}" style="min-height:46px;padding:0 20px;border:1.5px solid rgba(58,50,43,.2);border-radius:999px;background:#FDFAF4;color:#6D6D6D;font-size:15px;font-weight:600;cursor:pointer">Limpiar firma</button>
+                <button type="button" onClick="{{ confirmSig }}" style="min-height:46px;padding:0 22px;border:0;border-radius:999px;background:{{ sigCtaBg }};color:{{ sigCtaColor }};font-size:15px;font-weight:700;cursor:pointer">{{ sigCtaLabel }}</button>
+              </div>
+              <sc-if value="{{ sigNote }}" hint-placeholder-val="{{ false }}">
+                <p role="status" style="margin:14px 0 0;font-size:15px;line-height:1.55;color:{{ sigNoteColor }}">{{ sigNote }}</p>
+              </sc-if>
+              <label for="rv-sig-alt" style="display:block;margin:18px 0 8px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">O ESCRIBE TU NOMBRE COMPLETO COMO ALTERNATIVA ACCESIBLE</label>
+              <input id="rv-sig-alt" type="text" value="{{ sigTyped }}" onChange="{{ onSigTyped }}" placeholder="Ana María Rodríguez" style="width:100%;box-sizing:border-box;min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-size:16px;color:#3A322B">
+            </div>
+          </div>
+          </div>
+          <sc-if value="{{ formError }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="margin:16px 0 0;padding:16px 18px;border-radius:18px;background:#FDF3E7;border:1px solid #D4A34E;font-size:15px;line-height:1.55">{{ formError }}</p>
+          </sc-if>
+        </div>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ DAY PASS · PAGO ══════════ -->
+  <sc-if value="{{ isPay }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:1040px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">{{ payHeading }}</h1>
+      <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">{{ paySubtitle }}</p>
+
+      <div data-rv-paygrid style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;margin-top:16px">
+      <div>
+      <div style="padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ summaryRows }}" as="r" hint-placeholder-count="4">
+            <div data-rv-two="" style="display:grid;grid-template-columns:150px 1fr;gap:6px 16px;align-items:baseline">
+              <span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#6D6D6D">{{ r.label }}</span>
+              <span style="font-size:16.5px;line-height:1.5;color:#3A322B">{{ r.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(58,50,43,.12);display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ priceRows }}" as="p" hint-placeholder-count="2">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;font-size:16px">
+              <span style="color:#6D6D6D">{{ p.label }}</span>
+              <span style="font-weight:600">{{ p.value }}</span>
+            </div>
+          </sc-for>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-top:8px;padding-top:14px;border-top:1px solid rgba(58,50,43,.12)">
+            <span style="font-family:'EB Garamond',serif;font-size:24px">{{ totalLabel }}</span>
+            <span style="font-family:'EB Garamond',serif;font-size:30px;color:#9C6240">{{ total }}</span>
+          </div>
+          <sc-if value="{{ benefitNote }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:6px 0 0;font-size:14.5px;line-height:1.5;color:#6D6D6D">{{ benefitNote }}</p>
+          </sc-if>
+          <sc-if value="{{ showPolicyLink }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ openPolicyModal }}" style="align-self:flex-start;margin-top:2px;padding:0;border:0;background:none;color:#9C6240;font-size:14px;font-weight:600;text-decoration:underline;cursor:pointer">Ver condiciones de reserva y pago →</button>
+          </sc-if>
+        </div>
+      </div>
+
+      </div>
+      <div>
+      <h2 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:24px">Método de pago</h2>
+      <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:#6D6D6D">Elige cómo quieres pagar. Lo que escribes se refleja al instante en tu tarjeta Cocoon.</p>
+
+      <div data-rv-paysel="" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px">
+        <sc-for list="{{ payMethods }}" as="m" hint-placeholder-count="3">
+          <button type="button" onClick="{{ m.onPick }}" aria-pressed="{{ m.on }}" aria-label="{{ m.label }}" style="position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;min-height:104px;padding:14px 16px;border:1.5px solid {{ m.border }};border-radius:24px;background:{{ m.bg }};box-shadow:{{ m.shadow }};transform:{{ m.lift }};transition:transform .26s cubic-bezier(.2,.7,.2,1),box-shadow .26s ease,border-color .2s ease,background .3s ease;cursor:pointer;text-align:left" style-hover="transform:translateY(-3px);box-shadow:0 18px 34px -24px rgba(58,50,43,.55)">
+            <span style="position:absolute;right:-20px;bottom:-24px;width:78px;height:78px;background-image:url('{{ m.shape }}');background-size:contain;background-repeat:no-repeat;background-position:center;opacity:{{ m.shapeOpacity }};transition:opacity .3s ease;pointer-events:none"></span>
+            <span aria-hidden="true" style="display:block;width:100%;height:{{ m.logoH }};background-image:url('{{ m.logo }}');background-size:contain;background-repeat:no-repeat;background-position:left center;opacity:{{ m.logoOpacity }};transition:opacity .3s ease"></span>
+            <span style="position:relative;font-size:13px;line-height:1.35;color:{{ m.subColor }}">{{ m.sub }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:18px">
+        <sc-if value="{{ showCardPreview }}" hint-placeholder-val="{{ true }}">
+          <div style="perspective:1500px">
+            <div style="position:relative;width:100%;max-width:440px;aspect-ratio:1.62;transform-style:preserve-3d;transform:{{ flipTransform }};transition:transform .78s cubic-bezier(.2,.75,.2,1)">
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;overflow:hidden;border:1px solid {{ cardEdge }};background:{{ cardBg }};box-shadow:0 28px 54px -32px rgba(58,50,43,.62);padding:clamp(18px,2.4vw,24px);display:flex;flex-direction:column;justify-content:space-between;transition:background .5s ease">
+                <span style="position:absolute;right:-42px;bottom:-56px;width:210px;height:210px;background-image:url('{{ cardShapeA }}');background-size:contain;background-repeat:no-repeat;opacity:.4;pointer-events:none"></span>
+                <span style="position:absolute;left:-26px;top:-30px;width:110px;height:110px;background-image:url('{{ cardShapeB }}');background-size:contain;background-repeat:no-repeat;opacity:.28;pointer-events:none"></span>
+                <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:14px">
+                  <span style="font-size:11px;font-weight:700;letter-spacing:.2em;color:{{ cardMuted }}">COCOON PLAY PASS</span>
+                  <span aria-hidden="true" style="flex:none;width:72px;height:26px;background-image:url('{{ cardLogo }}');background-size:contain;background-repeat:no-repeat;background-position:right center"></span>
+                </div>
+                <div style="position:relative;display:flex;flex-direction:column;gap:12px">
+                  <div style="align-self:flex-start;padding:8px 12px;margin-left:-12px;border-radius:14px;background:{{ zNumber }};transition:background .35s ease">
+                    <span style="display:block;font-size:clamp(17px,2.2vw,22px);font-weight:600;letter-spacing:.16em;color:{{ cardInk }};white-space:nowrap">{{ numberDisplay }}</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-end;gap:clamp(14px,3vw,30px)">
+                    <div style="min-width:0;flex:1 1 auto;padding:7px 12px;margin-left:-12px;border-radius:13px;background:{{ zName }};transition:background .35s ease">
+                      <span style="display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;color:{{ cardMuted }}">TITULAR</span>
+                      <span style="display:block;margin-top:3px;font-size:14.5px;font-weight:600;letter-spacing:.05em;color:{{ cardInk }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ holderDisplay }}</span>
+                    </div>
+                    <div style="flex:none;padding:7px 12px;border-radius:13px;background:{{ zExp }};transition:background .35s ease">
+                      <span style="display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;color:{{ cardMuted }}">VENCE</span>
+                      <span style="display:block;margin-top:3px;font-size:14.5px;font-weight:600;letter-spacing:.08em;color:{{ cardInk }}">{{ expDisplay }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);border-radius:28px;overflow:hidden;border:1px solid {{ cardEdge }};background:{{ cardBackBg }};box-shadow:0 28px 54px -32px rgba(58,50,43,.62);display:flex;flex-direction:column">
+                <span style="position:absolute;left:-30px;bottom:-40px;width:170px;height:170px;background-image:url('{{ cardShapeB }}');background-size:contain;background-repeat:no-repeat;opacity:.3;pointer-events:none"></span>
+                <div style="height:46px;margin-top:26px;background:rgba(58,50,43,.82)"></div>
+                <div style="position:relative;padding:18px clamp(18px,2.4vw,24px);display:flex;align-items:center;gap:14px">
+                  <div style="flex:1 1 auto;height:40px;border-radius:8px;background:rgba(253,250,244,.75)"></div>
+                  <div style="flex:none;min-width:86px;height:40px;border-radius:10px;background:{{ zCvv }};border:1.5px solid {{ cvvEdge }};display:flex;align-items:center;justify-content:center;transition:background .35s ease,border-color .35s ease">
+                    <span style="font-size:16px;font-weight:700;letter-spacing:.24em;color:{{ cardInk }}">{{ cvvDisplay }}</span>
+                  </div>
+                </div>
+                <p style="margin:0 clamp(18px,2.4vw,24px);font-size:12.5px;line-height:1.5;color:{{ cardMuted }}">Los 3 dígitos al reverso de tu tarjeta.</p>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showYappyPreview }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;overflow:hidden;width:100%;max-width:440px;padding:clamp(18px,2.4vw,24px);border-radius:30px;border:1px solid rgba(58,50,43,.12);background:linear-gradient(160deg,#FFFDF8 0%,#F5ECDA 100%);box-shadow:0 28px 54px -34px rgba(58,50,43,.55)">
+            <span style="position:absolute;right:-34px;top:-40px;width:170px;height:170px;background-image:url('uploads/IMG_6818.PNG');background-size:contain;background-repeat:no-repeat;opacity:.34;pointer-events:none"></span>
+            <span style="position:absolute;left:-26px;bottom:-34px;width:120px;height:120px;background-image:url('uploads/IMG_6823.PNG');background-size:contain;background-repeat:no-repeat;opacity:.22;pointer-events:none"></span>
+            <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.2em;color:#6D6D6D">PAGO MÓVIL COCOON</span>
+              <img src="uploads/yappy-color-portrait.svg" alt="" aria-hidden="true" style="height:42px;width:auto;object-fit:contain">
+            </div>
+            <div style="position:relative;margin-top:22px;padding:16px 18px;border-radius:22px;background:{{ zPhone }};border:1.5px solid {{ phoneEdge }};transition:background .35s ease,border-color .35s ease">
+              <span style="display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;color:#6D6D6D">CELULAR YAPPY</span>
+              <span style="display:block;margin-top:5px;font-family:'EB Garamond',serif;font-size:clamp(24px,3vw,30px);letter-spacing:.04em;color:#3A322B">{{ yappyDisplay }}</span>
+            </div>
+            <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px">
+              <span style="font-size:14.5px;line-height:1.45;color:#6D6D6D">Pago desde tu banco</span>
+              <span style="display:inline-flex;align-items:center;min-height:34px;padding:0 14px;border-radius:999px;background:#EFE6D4;font-size:13px;font-weight:700;color:#9C6240">{{ total }}</span>
+            </div>
+            <p style="position:relative;margin:14px 0 0;font-size:13.5px;line-height:1.5;color:#6D6D6D">Confirmas el pago en la app de tu banco y volvemos aquí con tu reserva lista.</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ cardForm }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:18px;display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NÚMERO DE TARJETA
+            <input type="text" inputmode="numeric" autocomplete="cc-number" value="{{ cardNumber }}" onChange="{{ onCardNumber }}" onFocus="{{ focusNumber }}" onBlur="{{ blurField }}" placeholder="0000 0000 0000 0000" style="min-height:54px;padding:0 16px;border:1.5px solid {{ cardBorder }};border-radius:16px;background:#FFFDF8;font-size:16.5px;font-weight:500;letter-spacing:.08em;color:#3A322B;transition:border-color .2s ease,box-shadow .2s ease" style-focus="border-color:#9C6240;box-shadow:0 0 0 4px rgba(156,98,64,.12)">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NOMBRE DEL TITULAR
+            <input type="text" autocomplete="cc-name" value="{{ cardHolder }}" onChange="{{ onCardHolder }}" onFocus="{{ focusName }}" onBlur="{{ blurField }}" placeholder="Como aparece en la tarjeta" style="min-height:54px;padding:0 16px;border:1.5px solid {{ holderBorder }};border-radius:16px;background:#FFFDF8;font-size:16px;font-weight:500;color:#3A322B;transition:border-color .2s ease,box-shadow .2s ease" style-focus="border-color:#9C6240;box-shadow:0 0 0 4px rgba(156,98,64,.12)">
+          </label>
+          <div data-rv-two="" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">VENCE
+              <input type="text" inputmode="numeric" autocomplete="cc-exp" value="{{ cardExp }}" onChange="{{ onCardExp }}" onFocus="{{ focusExp }}" onBlur="{{ blurField }}" placeholder="MM/AA" style="min-height:54px;padding:0 16px;border:1.5px solid {{ expBorder }};border-radius:16px;background:#FFFDF8;font-size:16px;font-weight:500;letter-spacing:.06em;color:#3A322B;transition:border-color .2s ease,box-shadow .2s ease" style-focus="border-color:#9C6240;box-shadow:0 0 0 4px rgba(156,98,64,.12)">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">CVV
+              <input type="text" inputmode="numeric" autocomplete="cc-csc" maxlength="4" value="{{ cardCvv }}" onChange="{{ onCardCvv }}" onFocus="{{ focusCvv }}" onBlur="{{ blurField }}" placeholder="000" style="min-height:54px;padding:0 16px;border:1.5px solid {{ cvvBorder }};border-radius:16px;background:#FFFDF8;font-size:16px;font-weight:500;letter-spacing:.14em;color:#3A322B;transition:border-color .2s ease,box-shadow .2s ease" style-focus="border-color:#9C6240;box-shadow:0 0 0 4px rgba(156,98,64,.12)">
+            </label>
+          </div>
+          <sc-if value="{{ brandNote }}" hint-placeholder-val="{{ false }}">
+            <p role="status" style="margin:2px 0 0;font-size:14px;line-height:1.5;color:#5E6B22">{{ brandNote }}</p>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ yappyForm }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:18px;max-width:420px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NÚMERO DE CELULAR ASOCIADO A YAPPY
+            <input type="tel" inputmode="tel" value="{{ yappyPhone }}" onChange="{{ onYappyPhone }}" onFocus="{{ focusPhone }}" onBlur="{{ blurField }}" placeholder="6000-0000" style="min-height:54px;padding:0 16px;border:1.5px solid {{ yappyBorder }};border-radius:16px;background:#FFFDF8;font-size:16.5px;font-weight:500;letter-spacing:.06em;color:#3A322B;transition:border-color .2s ease,box-shadow .2s ease" style-focus="border-color:#9C6240;box-shadow:0 0 0 4px rgba(156,98,64,.12)">
+          </label>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showAcceptCheckbox }}" hint-placeholder-val="{{ false }}">
+        <label style="display:flex;align-items:flex-start;gap:11px;margin-top:20px;padding:16px 18px;border-radius:18px;background:#FDFAF4;border:1px solid rgba(58,50,43,.12);cursor:pointer">
+          <input type="checkbox" checked="{{ policyAccepted }}" onChange="{{ togglePolicyAccepted }}" style="width:20px;height:20px;flex:none;margin-top:1px;accent-color:#9C6240;cursor:pointer">
+          <span style="font-size:15px;line-height:1.5;color:#3A322B">He leído y acepto las <button type="button" onClick="{{ openPolicyModal }}" style="padding:0;border:0;background:none;color:#9C6240;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer">condiciones de reserva, pago y cancelación</button> de Cocoon.</span>
+        </label>
+      </sc-if>
+
+      <sc-if value="{{ payError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="margin-top:18px;padding:18px 20px;border-radius:20px;background:#FDF3E7;border:1px solid #9C6240">
+          <p style="margin:0;font-size:16px;font-weight:700;color:#9C6240">{{ payErrorTitle }}</p>
+          <p style="margin:6px 0 0;font-size:15px;line-height:1.55;color:#3A322B">{{ payError }}</p>
+        </div>
+      </sc-if>
+
+      <p style="margin:20px 0 0;display:flex;align-items:center;gap:10px;font-size:14px;color:#6D6D6D">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BAB25A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Pago protegido. Cocoon no almacena los datos de tu tarjeta.
+      </p>
+      </div>
+      </div>
+    </section>
+
+    <sc-if value="{{ showPolicyModal }}" hint-placeholder-val="{{ false }}">
+      <div role="dialog" aria-modal="true" style="position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(58,50,43,.45);backdrop-filter:blur(2px)">
+        <div style="position:relative;width:100%;max-width:560px;max-height:min(84vh,760px);display:flex;flex-direction:column;border-radius:28px;background:#FFFDF8;box-shadow:0 40px 80px -30px rgba(58,50,43,.55);overflow:hidden">
+          <button type="button" onClick="{{ closePolicyModal }}" aria-label="Cerrar" style="position:absolute;top:16px;right:16px;width:36px;height:36px;border:0;border-radius:999px;background:#F5ECDA;color:#3A322B;font-size:18px;cursor:pointer;z-index:1">✕</button>
+          <div style="padding:clamp(22px,3vw,32px) clamp(22px,3vw,32px) 8px;flex:none">
+            <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.16em;color:#9C6240">COCOON</p>
+            <h2 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3vw,28px);line-height:1.15;color:#3A322B">Condiciones de reserva y pago</h2>
+            <p style="margin:10px 0 0;font-size:15px;line-height:1.55;color:#6D6D6D">Antes de confirmar tu celebración, revisa las principales condiciones de reserva de Cocoon.</p>
+          </div>
+          <div data-scrollpro="vertical" style="flex:1 1 auto;overflow-y:auto;padding:16px clamp(22px,3vw,32px) 4px;display:flex;flex-direction:column;gap:20px">
+            <div>
+              <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">RESERVA</p>
+              <div style="display:flex;align-items:baseline;gap:14px;padding:14px 16px;border-radius:16px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1)">
+                <span style="font-family:'EB Garamond',serif;font-size:28px;color:#9C6240;flex:none">$400</span>
+                <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">Depósito requerido para separar la fecha.</p>
+              </div>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">CALENDARIO DE PAGOS</p>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:baseline;gap:14px;padding:14px 16px;border-radius:16px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1)">
+                  <span style="font-family:'EB Garamond',serif;font-size:22px;color:#9C6240;flex:none;white-space:nowrap">50% · 30 días antes</span>
+                  <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">Al menos el 50% del total contratado debe estar pagado 30 días antes del evento.</p>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:14px;padding:14px 16px;border-radius:16px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1)">
+                  <span style="font-family:'EB Garamond',serif;font-size:22px;color:#9C6240;flex:none;white-space:nowrap">100% · 7 días antes</span>
+                  <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">El 100% debe estar cancelado 7 días antes del evento.</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">CANCELACIONES</p>
+              <div data-rv-two="" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+                <div style="padding:12px 14px;border-radius:14px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1);text-align:center">
+                  <p style="margin:0;font-size:13px;color:#6D6D6D">45 días o más</p>
+                  <p style="margin:4px 0 0;font-weight:700;color:#3A322B">100% devolución</p>
+                </div>
+                <div style="padding:12px 14px;border-radius:14px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1);text-align:center">
+                  <p style="margin:0;font-size:13px;color:#6D6D6D">30–44 días</p>
+                  <p style="margin:4px 0 0;font-weight:700;color:#3A322B">50% devolución</p>
+                </div>
+                <div style="padding:12px 14px;border-radius:14px;background:#FDFAF4;border:1px solid rgba(58,50,43,.1);text-align:center">
+                  <p style="margin:0;font-size:13px;color:#6D6D6D">29 días o menos</p>
+                  <p style="margin:4px 0 0;font-weight:700;color:#3A322B">Sin devolución</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">CAMBIO DE FECHA</p>
+              <p style="margin:0 0 6px;font-size:15px;line-height:1.5;color:#3A322B">Con más de 30 días de anticipación, el primer cambio no genera recargo y está sujeto a disponibilidad.</p>
+              <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">Dentro de los últimos 30 días, el cambio está sujeto a disponibilidad y puede aplicar un recargo.</p>
+            </div>
+            <div>
+              <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">OTRAS POLÍTICAS</p>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">No se permite ingresar comida ni bebidas externas.</p>
+                <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">Las medias antideslizantes Cocoon de los niños están incluidas. Los adultos que ingresen al playground deben usar medias; se recomiendan antideslizantes.</p>
+                <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">La cafetería permanece abierta al público. Sus mesas son para clientes que estén consumiendo y no forman parte de la reserva del evento.</p>
+                <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">Cocoon no es un servicio de guardería. Los niños deben permanecer bajo supervisión de su adulto responsable.</p>
+                <p style="margin:0;font-size:15px;line-height:1.5;color:#3A322B">El ingreso o servicio de alcohol debe consultarse y ser autorizado previamente por Cocoon, y puede generar cargos o condiciones adicionales.</p>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;display:flex;flex-wrap:wrap;gap:10px;padding:18px clamp(22px,3vw,32px);border-top:1px solid rgba(58,50,43,.1)">
+            <button type="button" onClick="{{ closePolicyModal }}" style="min-height:48px;padding:0 24px;border:0;border-radius:999px;background:#9C6240;color:#FDFAF4;font-size:15px;font-weight:700;cursor:pointer">Entendido</button>
+            <a href="Politicas.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border:1.5px solid rgba(58,50,43,.2);border-radius:999px;color:#3A322B;font-size:15px;font-weight:600">Ver términos completos</a>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <!-- ══════════ DAY PASS · CONFIRMACIÓN ══════════ -->
+  <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:880px;margin:0 auto;padding:clamp(16px,2.2vw,24px) clamp(16px,4vw,40px) 28px">
+      <div style="display:flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:999px;background:#BAB25A">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FDFAF4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h1 style="margin:14px 0 0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(26px,3.6vw,37px);line-height:1.08">¡Nos vemos en Cocoon!</h1>
+      <p style="margin:8px 0 0;font-size:16px;line-height:1.5;color:#6D6D6D">Tu visita está confirmada. Te enviamos la confirmación por email y WhatsApp.</p>
+
+      <div data-rv-two="" style="display:grid;grid-template-columns:1fr 232px;gap:clamp(18px,2.6vw,28px);margin-top:18px;align-items:start">
+        <div style="padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4;display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ confirmRows }}" as="r" hint-placeholder-count="5">
+            <div data-rv-two="" style="display:grid;grid-template-columns:150px 1fr;gap:6px 16px;align-items:baseline">
+              <span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#6D6D6D">{{ r.label }}</span>
+              <span style="font-size:16.5px;line-height:1.5;color:#3A322B">{{ r.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="padding:20px;border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4;text-align:center">
+          <div style="display:grid;grid-template-columns:repeat(11,1fr);gap:2px;padding:14px;background:#FFFDF8;border-radius:16px">
+            <sc-for list="{{ qr }}" as="q" hint-placeholder-count="121">
+              <span style="aspect-ratio:1;border-radius:1px;background:{{ q }}"></span>
+            </sc-for>
+          </div>
+          <p style="margin:12px 0 0;font-size:13.5px;line-height:1.5;color:#6D6D6D">Muestra este pase en recepción</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+            <button type="button" style="min-height:44px;border-radius:999px;border:1.5px solid rgba(58,50,43,.2);background:#FFFDF8;color:#3A322B;font-size:14px;font-weight:600;cursor:pointer">Apple Wallet</button>
+            <button type="button" style="min-height:44px;border-radius:999px;border:1.5px solid rgba(58,50,43,.2);background:#FFFDF8;color:#3A322B;font-size:14px;font-weight:600;cursor:pointer">Google Wallet</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;padding:16px 20px;border-radius:20px;background:#EFE6D4;display:flex;flex-direction:column;gap:10px">
+        <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">ANTES DE VENIR</p>
+        <p style="margin:0;font-size:15.5px;line-height:1.6;color:#3A322B">Trae medias antideslizantes (grip socks) para cada niño. También las vendemos en recepción.</p>
+        <p style="margin:0;font-size:15.5px;line-height:1.6;color:#3A322B">Estamos en Costa del Este, Panamá. <a href="#" style="font-weight:700">Ver cómo llegar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-left:5px"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></p>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px">
+        <button type="button" style="min-height:54px;padding:0 28px;border:0;border-radius:999px;background:#9C6240;color:#FDFAF4;font-size:16px;font-weight:700;cursor:pointer">Ver mi reserva</button>
+        <a href="./Cocoon Home.dc.html" style="display:inline-flex;align-items:center;min-height:54px;padding:0 26px;border:1.5px solid rgba(58,50,43,.22);border-radius:999px;color:#3A322B;font-size:16px;font-weight:600">Volver al inicio</a>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ EVENTO · FECHA ══════════ -->
+  <sc-if value="{{ isEvDate }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:820px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">¿Cuándo te gustaría celebrarlo?</h1>
+      <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">Elige tu fecha preferida. Si tienes flexibilidad, puedes darnos hasta dos alternativas.</p>
+
+      <div data-rv-evdate="" style="display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:clamp(16px,2.4vw,28px);align-items:start;margin-top:20px">
+      <div style="display:flex;flex-direction:column;gap:10px" data-rv-cal="">
+        <div style="background:#FDFAF4;border:1px solid rgba(58,50,43,.1);border-radius:22px;padding:clamp(12px,1.4vw,16px)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <button type="button" onClick="{{ cal.onPrev }}" aria-label="Mes anterior" style="flex:none;width:40px;height:40px;border-radius:999px;border:1px solid {{ cal.prevBorder }};background:#FDFAF4;color:#9C6240;cursor:{{ cal.prevCursor }};opacity:{{ cal.prevOpacity }};display:flex;align-items:center;justify-content:center;font-size:17px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <select value="{{ cal.month }}" onChange="{{ cal.onMonth }}" aria-label="Mes" style="flex:1 1 auto;min-width:0;min-height:40px;padding:0 10px;border:1px solid rgba(58,50,43,.16);border-radius:12px;background:#FFFDF8;font-family:'EB Garamond',serif;font-size:19px;color:#3A322B;cursor:pointer">
+              <sc-for list="{{ cal.monthOpts }}" as="m" hint-placeholder-count="12">
+                <option value="{{ m.value }}">{{ m.label }}</option>
+              </sc-for>
+            </select>
+            <select value="{{ cal.year }}" onChange="{{ cal.onYear }}" aria-label="Año" style="flex:none;min-height:40px;padding:0 8px;border:1px solid rgba(58,50,43,.16);border-radius:12px;background:#FFFDF8;font-family:'EB Garamond',serif;font-size:19px;color:#3A322B;cursor:pointer">
+              <sc-for list="{{ cal.yearOpts }}" as="y" hint-placeholder-count="2">
+                <option value="{{ y.value }}">{{ y.label }}</option>
+              </sc-for>
+            </select>
+            <button type="button" onClick="{{ cal.onNext }}" aria-label="Mes siguiente" style="flex:none;width:40px;height:40px;border-radius:999px;border:1px solid rgba(58,50,43,.18);background:#FDFAF4;color:#9C6240;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:4px">
+            <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+              <div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;color:#6D6D6D;padding:2px 0">{{ w }}</div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px">
+            <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="35">
+              <button type="button" data-rv-cell onClick="{{ c.onPick }}" disabled="{{ c.disabled }}" aria-label="{{ c.aria }}" aria-pressed="{{ c.on }}" title="{{ c.title }}" style="position:relative;aspect-ratio:1;min-height:38px;border:1.5px solid {{ c.border }};border-radius:{{ c.radius }};background:{{ c.bg }};color:{{ c.color }};font-family:Quicksand,sans-serif;font-size:15px;font-weight:{{ c.weight }};cursor:{{ c.cursor }};text-decoration:{{ c.strike }};display:flex;align-items:center;justify-content:center;padding:0;visibility:{{ c.vis }}">{{ c.day }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:12px;padding:clamp(16px,1.9vw,22px);border-radius:22px;background:#FDFAF4;border:1px solid rgba(58,50,43,.12)">
+          <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">TU FECHA</p>
+          <p style="margin:0;font-size:15.5px;line-height:1.55;color:#3A322B">{{ calHint }}</p>
+          <div style="height:1px;background:rgba(58,50,43,.1)"></div>
+          <button type="button" onClick="{{ toggleFlex }}" aria-pressed="{{ flexOn }}" style="display:inline-flex;align-items:center;gap:12px;align-self:flex-start;min-height:48px;padding:0 18px 0 14px;border:1.5px solid {{ flexBorder }};border-radius:999px;background:{{ flexBg }};color:#3A322B;font-size:15px;font-weight:600;cursor:pointer">
+            <span style="width:38px;height:22px;border-radius:999px;background:{{ flexTrackBg }};position:relative;flex:none">
+              <span style="position:absolute;top:3px;left:{{ flexKnobLeft }};width:16px;height:16px;border-radius:999px;background:#FDFAF4;transition:left .18s ease"></span>
+            </span>
+            Tengo flexibilidad de fechas
+          </button>
+          <p style="margin:0;font-size:14px;line-height:1.55;color:#6D6D6D">Con flexibilidad podemos ofrecerte más horarios y responderte más rápido.</p>
+        </div>
+        <sc-for list="{{ evDateRows }}" as="r" hint-placeholder-count="1">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 20px;border-radius:20px;background:#FDFAF4;border:1px solid rgba(58,50,43,.12)">
+            <span style="font-size:16px">
+              <strong style="font-weight:700">{{ r.tag }}</strong> · {{ r.label }}
+            </span>
+            <button type="button" onClick="{{ r.onRemove }}" style="min-height:40px;padding:0 12px;border:0;background:none;color:#6D6D6D;font-size:14px;text-decoration:underline;cursor:pointer">Quitar</button>
+          </div>
+        </sc-for>
+      </div>
+      </div>
+      <sc-if value="{{ evDateNote }}" hint-placeholder-val="{{ false }}">
+        <p role="alert" style="margin:16px 0 0;padding:14px 18px;border-radius:18px;background:#FDF3E7;border:1px solid #D4A34E;font-size:15px;line-height:1.55">{{ evDateNote }}</p>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ EVENTO · DETALLES ══════════ -->
+  <sc-if value="{{ isEvDetails }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:820px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">Cuéntanos un poquito</h1>
+      <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">Con esto ya podemos revisar disponibilidad y preparar una propuesta.</p>
+
+      <div style="margin-top:18px">
+        <p style="margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">QUÉ ESTÁS CELEBRANDO</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ eventTypes }}" as="e" hint-placeholder-count="6">
+            <button type="button" onClick="{{ e.onPick }}" aria-pressed="{{ e.on }}" style="min-height:48px;padding:0 20px;border:1.5px solid {{ e.border }};border-radius:999px;background:{{ e.bg }};color:#3A322B;font-size:15px;font-weight:600;cursor:pointer">{{ e.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4;display:flex;flex-direction:column;gap:18px">
+        <div data-rv-two="" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+          <sc-for list="{{ guestFields }}" as="f" hint-placeholder-count="3">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">{{ f.label }}
+              <input type="number" min="0" value="{{ f.value }}" onChange="{{ f.onChange }}" readOnly="{{ f.readOnly }}" inputmode="numeric" style="min-height:52px;padding:0 16px;border:1.5px solid {{ f.border }};border-radius:14px;background:{{ f.bg }};font-size:16px;font-weight:500;color:#3A322B">
+            </label>
+          </sc-for>
+        </div>
+        <div>
+          <p style="margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">HORARIO PREFERIDO</p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <sc-for list="{{ evSlots }}" as="s" hint-placeholder-count="3">
+              <button type="button" onClick="{{ s.onPick }}" aria-pressed="{{ s.on }}" style="min-height:48px;padding:0 20px;border:1.5px solid {{ s.border }};border-radius:999px;background:{{ s.bg }};color:{{ s.color }};font-size:15px;font-weight:600;cursor:pointer">{{ s.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NOTA OPCIONAL
+          <textarea rows="3" value="{{ evNote }}" onChange="{{ onEvNote }}" placeholder="Temática, alergias, algo que debamos saber…" style="padding:14px 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:16px;background:#FFFDF8;font-size:16px;font-weight:500;color:#3A322B;resize:vertical"></textarea>
+        </label>
+      </div>
+
+      <sc-if value="{{ showAddons }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:20px;padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4">
+        <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">¿QUIERES AÑADIR ALGO MÁS?</p>
+        <p style="margin:0 0 16px;font-size:15px;line-height:1.5;color:#6D6D6D">Opcional. Marca lo que te interese y lo incluimos en la propuesta con su precio.</p>
+        <div data-rv-two="" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px">
+          <sc-for list="{{ addonGroups }}" as="g" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <p style="margin:0;font-size:11.5px;font-weight:700;letter-spacing:.16em;color:#9C6240">{{ g.title }}</p>
+              <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                <label style="display:flex;align-items:center;gap:11px;min-height:44px;cursor:pointer">
+                  <input type="checkbox" checked="{{ it.on }}" onChange="{{ it.onToggle }}" style="width:20px;height:20px;flex:none;accent-color:#9C6240;cursor:pointer">
+                  <span style="font-size:15.5px;line-height:1.4;color:#3A322B">{{ it.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ evNeedsContact }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:20px;padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4">
+          <p style="margin:0 0 14px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">¿CÓMO TE CONTACTAMOS?</p>
+          <div data-rv-two="" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+            <sc-for list="{{ evContactFields }}" as="f" hint-placeholder-count="3">
+              <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">{{ f.label }}
+                <input type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" inputmode="{{ f.mode }}" style="min-height:52px;padding:0 16px;border:1.5px solid {{ f.border }};border-radius:14px;background:#FFFDF8;font-size:16px;font-weight:500;color:#3A322B">
+              </label>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ evError }}" hint-placeholder-val="{{ false }}">
+        <p role="alert" style="margin:20px 0 0;padding:16px 18px;border-radius:18px;background:#FDF3E7;border:1px solid #D4A34E;font-size:15px;line-height:1.55">{{ evError }}</p>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ EVENTO · REVISIÓN ══════════ -->
+  <sc-if value="{{ isEvReview }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:820px;margin:0 auto;padding:clamp(12px,1.8vw,20px) clamp(16px,4vw,40px) 24px">
+      <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(24px,3.1vw,33px);line-height:1.1">Revisa tu solicitud</h1>
+      <p style="margin:8px 0 0;font-size:15.5px;line-height:1.5;color:#6D6D6D">En el siguiente paso pagas el depósito de $400 para reservar tu fecha. El resto se ajusta con la propuesta final.</p>
+      <div style="margin-top:16px;padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4;display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ evSummary }}" as="r" hint-placeholder-count="5">
+          <div data-rv-two="" style="display:grid;grid-template-columns:170px 1fr;gap:6px 16px;align-items:baseline">
+            <span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#6D6D6D">{{ r.label }}</span>
+            <span style="font-size:16.5px;line-height:1.5;color:#3A322B">{{ r.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- ══════════ EVENTO · ENVIADO ══════════ -->
+  <sc-if value="{{ isEvDone }}" hint-placeholder-val="{{ false }}">
+    <section data-rv-screen="" style="max-width:820px;margin:0 auto;padding:clamp(16px,2.2vw,24px) clamp(16px,4vw,40px) 28px">
+      <div style="display:flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:999px;background:#D4A34E">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FDFAF4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
+      </div>
+      <h1 style="margin:14px 0 0;font-family:'EB Garamond',serif;font-weight:400;font-size:clamp(26px,3.6vw,37px);line-height:1.08">¡Tu fecha está reservada!</h1>
+      <p style="margin:8px 0 0;font-size:16px;line-height:1.55;color:#6D6D6D;max-width:52ch">Tu depósito de $400 quedó registrado. Nuestro equipo te contactará por WhatsApp para afinar los detalles y armar la propuesta final.</p>
+      <div style="margin-top:18px;padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4;display:flex;flex-direction:column;gap:12px">
+        <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">QUÉ SIGUE</p>
+        <div style="display:flex;align-items:flex-start;gap:12px"><span style="flex:none;width:7px;height:7px;margin-top:8px;border-radius:999px;background:#9C6240"></span><p style="margin:0;font-size:15.5px;line-height:1.55;color:#3A322B">Confirmamos disponibilidad y bloqueamos tu fecha.</p></div>
+        <div style="display:flex;align-items:flex-start;gap:12px"><span style="flex:none;width:7px;height:7px;margin-top:8px;border-radius:999px;background:#9C6240"></span><p style="margin:0;font-size:15.5px;line-height:1.55;color:#3A322B">Te contactamos y armamos la propuesta contigo.</p></div>
+        <div style="display:flex;align-items:flex-start;gap:12px"><span style="flex:none;width:7px;height:7px;margin-top:8px;border-radius:999px;background:#9C6240"></span><p style="margin:0;font-size:15.5px;line-height:1.55;color:#3A322B">Al menos el 50% del total se paga 30 días antes; el 100% se completa 7 días antes del evento.</p></div>
+      </div>
+      <div style="margin-top:18px;padding:clamp(15px,1.8vw,20px);border:1px solid rgba(58,50,43,.12);border-radius:26px;background:#FDFAF4;display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ evDoneRows }}" as="r" hint-placeholder-count="4">
+          <div data-rv-two="" style="display:grid;grid-template-columns:170px 1fr;gap:6px 16px;align-items:baseline">
+            <span style="font-size:12px;font-weight:700;letter-spacing:.12em;color:#6D6D6D">{{ r.label }}</span>
+            <span style="font-size:16.5px;line-height:1.5;color:#3A322B">{{ r.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:22px;padding:18px 22px;border-radius:22px;background:#EFE6D4;display:flex;align-items:center;gap:12px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BAB25A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        <p style="margin:0;font-size:15.5px;line-height:1.55;color:#3A322B">Te contactaremos por WhatsApp al {{ evPhoneShown }}.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px">
+        <a href="./Cocoon Home.dc.html" style="display:inline-flex;align-items:center;min-height:54px;padding:0 28px;border-radius:999px;background:#9C6240;color:#FDFAF4;font-size:16px;font-weight:700">Volver a Cocoon</a>
+        <button type="button" style="min-height:54px;padding:0 26px;border:1.5px solid rgba(58,50,43,.22);border-radius:999px;background:none;color:#3A322B;font-size:16px;font-weight:600;cursor:pointer">Ver solicitud</button>
+      </div>
+    </section>
+  </sc-if>
+
+  </main>
+
+  <!-- ══════════ STICKY ACTION BAR ══════════ -->
+  <sc-if value="{{ showBar }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:none;z-index:50;background:rgba(245,236,218,.94);backdrop-filter:blur(12px);border-top:1px solid rgba(58,50,43,.1)">
+      <div style="max-width:1050px;margin:0 auto;padding:12px clamp(16px,4vw,40px);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div style="min-width:0;flex:1 1 200px">
+          <p style="margin:0;font-size:16px;font-weight:700;color:#3A322B">{{ barTitle }}</p>
+          <p style="margin:3px 0 0;font-size:14.5px;line-height:1.45;color:#6D6D6D">{{ barSub }}</p>
+        </div>
+        <button type="button" onClick="{{ onNext }}" disabled="{{ nextDisabled }}" style="flex:none;min-height:54px;padding:0 30px;border:0;border-radius:999px;background:{{ nextBg }};color:{{ nextColor }};font-size:16.5px;font-weight:700;cursor:{{ nextCursor }};opacity:{{ nextOpacity }}">{{ nextLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;weekdayPrice&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:16,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:5,&quot;max&quot;:60,&quot;unit&quot;:&quot;$&quot;,&quot;section&quot;:&quot;Precios&quot;},&quot;weekendPrice&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:18,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:5,&quot;max&quot;:60,&quot;unit&quot;:&quot;$&quot;,&quot;section&quot;:&quot;Precios&quot;},&quot;multiTicketDiscount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:25,&quot;unit&quot;:&quot;%&quot;,&quot;section&quot;:&quot;Precios&quot;},&quot;showAvailability&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Reserva&quot;},&quot;waiverVersion&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;v2.1&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Legal&quot;},&quot;simulateWaiverExpired&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Casos borde&quot;},&quot;simulateMembershipExpired&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Casos borde&quot;},&quot;simulateSessionExpiry&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Casos borde&quot;},&quot;startLoggedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Casos borde&quot;}}">
+const MES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const TODAY = '2026-09-12';
+const FULL_DAYS = ['2026-09-18','2026-09-26','2026-10-03','2026-10-17'];
+const SLOT_TIMES = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+const SLOT_FREE = { '9:00 AM': 12, '10:00 AM': 6, '11:00 AM': 0, '12:00 PM': 9, '1:00 PM': 4, '2:00 PM': 11, '3:00 PM': 0, '4:00 PM': 7, '5:00 PM': 3 };
+const DEMO_FAMILY = {
+  name: 'Denise Rodríguez',
+  email: 'denise@ejemplo.com',
+  phone: '+507 6000-0000',
+  membership: { label: 'Founding Member', active: true, discount: .2, until: 'diciembre 2026' },
+  waiverVersion: 'v2.1',
+  waiverUntil: 'marzo 2027',
+  kids: [
+    { name: 'Charlie', meta: '4 años · Founding Member', bookedDates: ['2026-09-19'] },
+    { name: 'Tobías', meta: '2 años · perfil desde 2025', bookedDates: [] }
+  ]
+};
+const KNOWN_ACCOUNTS = ['denise@ejemplo.com', 'ana@ejemplo.com', '60000000'];
+
+const EVENTS = [
+  ['Cumpleaños', 'El clásico Cocoon, con torta y juego libre.', '#D4A34E'],
+  ['Bautizo', 'Celebración íntima para la familia completa.', '#9CB4C7'],
+  ['Baby Shower', 'Un espacio tranquilo y cálido para recibir al bebé.', '#BAB25A'],
+  ['Despedida de soltera', 'Reservado y con ambiente a tu medida.', '#9C6240'],
+  ['Gender Reveal', 'La sorpresa, montada por nuestro equipo.', '#D4A34E'],
+  ['Otro evento', 'Cuéntanos tu idea y la construimos juntos.', '#6D6D6D']
+];
+
+class Component extends DCLogic {
+  state = {
+    session: null,
+    otpTries: 0,
+    recovering: false,
+    sessionNote: '',
+    flow: null,
+    step: 0,
+    month: 8,
+    year: 2026,
+    dates: [],
+    dateNote: '',
+    time: null,
+    perDay: false,
+    timePerDate: {},
+    loadingSlots: false,
+    timeError: '',
+    famStage: 'identify',
+    idValue: '',
+    idError: '',
+    otpValue: '',
+    otpError: '',
+    otpLeft: 45,
+    verifying: false,
+    known: false,
+    kidAdded: false,
+    kidsSel: [0],
+    savedKids: [['Charlie', '4 años · perfil desde 2024'], ['Tobías', '2 años · perfil desde 2025']],
+    newKids: [{ nombre: '', apellido: '', nacimiento: '' }],
+    adult: { nombre: '', apellido: '', telefono: '', email: '' },
+    waiverOn: false,
+    sigDrawn: false,
+    sigConfirmed: false,
+    sigTyped: '',
+    sigNote: '',
+    sigNoteColor: '#6D6D6D',
+    formError: '',
+    touched: false,
+    kidsError: '',
+    policyAccepted: false,
+    showPolicyModal: false,
+    payMethod: 'visa',
+    cardNumber: '',
+    cardHolder: '',
+    cardExp: '',
+    cardCvv: '',
+    yappyPhone: '',
+    focusField: '',
+    brandNote: '',
+    payError: '',
+    payErrorTitle: '',
+    paying: false,
+    ref: 'CN-4K92T',
+    evType: null,
+    evFlex: false,
+    evDates: [],
+    evDateNote: '',
+    evGuests: '', evAdults: '', evKids: '',
+    evSlot: null,
+    evNote: '', evAddons: [],
+    evName: '', evPhone: '', evEmail: '',
+    evError: '',
+    evTouched: false,
+    sending: false
+  };
+
+  // ---------- helpers ----------
+  iso(y, m, d) { return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'); }
+  parse(s) { const p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  closed(s) { return this.parse(s).getDay() === 1; }
+  full(s) { return FULL_DAYS.indexOf(s) >= 0; }
+  past(s) { return s < TODAY; }
+  blocked(s) { return this.past(s) || this.closed(s) || this.full(s); }
+  money(n) { return '$' + n.toFixed(2); }
+  dayNum(s) { return +s.slice(8); }
+  monthName(s) { return MES[+s.slice(5, 7) - 1]; }
+  longDate(s) { const d = this.parse(s); const w = DIAS[d.getDay()]; return w.charAt(0).toUpperCase() + w.slice(1) + ' ' + d.getDate() + ' de ' + MES[d.getMonth()]; }
+  expand(a, b) {
+    const out = []; const d = this.parse(a); const end = this.parse(b);
+    while (d <= end) { const s = this.iso(d.getFullYear(), d.getMonth(), d.getDate()); if (!this.blocked(s)) out.push(s); d.setDate(d.getDate() + 1); }
+    return out;
+  }
+  selected() {
+    const st = this.state;
+    if (st.flow === 'event') return st.evDates;
+    return st.dates.slice().sort();
+  }
+  gapDays() {
+    const d = this.selected();
+    if (d.length < 2) return 0;
+    return this.expand(d[0], d[d.length - 1]).length - d.length;
+  }
+  contiguous() { return this.selected().length > 1 && this.gapDays() === 0; }
+  adjacentSelected(s, dir) {
+    const st = this.state;
+    const d = this.parse(s);
+    for (let k = 0; k < 5; k++) {
+      d.setDate(d.getDate() + dir);
+      const t = this.iso(d.getFullYear(), d.getMonth(), d.getDate());
+      if (st.dates.indexOf(t) >= 0) return true;
+      if (!this.blocked(t)) return false;
+    }
+    return false;
+  }
+  datesLabel() {
+    const d = this.selected();
+    if (!d.length) return '';
+    if (d.length === 1) return this.dayNum(d[0]) + ' de ' + this.monthName(d[0]);
+    if (this.contiguous() && d.length > 2) {
+      const a = d[0], b = d[d.length - 1];
+      return this.monthName(a) === this.monthName(b)
+        ? this.dayNum(a) + '–' + this.dayNum(b) + ' ' + this.monthName(a)
+        : this.dayNum(a) + ' ' + this.monthName(a) + ' – ' + this.dayNum(b) + ' ' + this.monthName(b);
+    }
+    const nums = d.map(s => this.dayNum(s));
+    const last = nums.pop();
+    return nums.join(', ') + ' y ' + last + ' de ' + this.monthName(d[0]);
+  }
+  kidCount() {
+    const st = this.state;
+    if (st.session) return Math.max(1, st.kidsSel.length);
+    return Math.max(1, st.newKids.length);
+  }
+  kidNames() {
+    const st = this.state;
+    const kids = this.familyKids();
+    if (st.session) return st.kidsSel.map(i => (kids[i] || {}).name).filter(Boolean).join(' + ') || '—';
+    return st.newKids.map(k => k.nombre.trim()).filter(Boolean).join(' + ') || 'Tu familia';
+  }
+  weekendRate() { return this.props.weekendPrice ?? 18; }
+  weekdayRate() { return this.props.weekdayPrice ?? 16; }
+  rateFor(s) { const d = this.parse(s).getDay(); return (d === 0 || d === 6) ? this.weekendRate() : this.weekdayRate(); }
+  ticketCount() { return this.kidCount() * Math.max(1, this.selected().length); }
+  ticketSplit() {
+    const k = this.kidCount();
+    const days = this.selected();
+    const out = { week: 0, end: 0 };
+    if (!days.length) { out.week = k; return out; }
+    days.forEach(s => { if (this.rateFor(s) === this.weekendRate()) out.end += k; else out.week += k; });
+    return out;
+  }
+  subtotalNum() { const s = this.ticketSplit(); return s.week * this.weekdayRate() + s.end * this.weekendRate(); }
+  multiPct() { return this.ticketCount() > 2 ? (this.props.multiTicketDiscount ?? 5) / 100 : 0; }
+  multiNum() { return this.subtotalNum() * this.multiPct(); }
+  discountNum() { return this.membershipActive() ? (this.subtotalNum() - this.multiNum()) * (this.state.session.membership.discount || 0) : 0; }
+  totalNum() { return this.subtotalNum() - this.multiNum() - this.discountNum(); }
+
+  // ---------- navigation ----------
+  set(o) { this.setState(o); }
+
+  // ---------- session ----------
+  loadSession() { try { const r = localStorage.getItem('cocoon_session'); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  saveSession(s) { try { localStorage.setItem('cocoon_session', JSON.stringify(s)); } catch (e) {} this.set({ session: s }); }
+  componentDidMount() {
+    let s = this.loadSession();
+    if (!s && this.props.startLoggedIn) { s = DEMO_FAMILY; this.saveSession(s); }
+    const sess = s ? { session: s, known: true, kidsSel: (s.kids || []).length ? [0] : [] } : {};
+    const p = new URLSearchParams(window.location.search);
+    const flowParam = p.get('flow');
+    const patch = {};
+    if (flowParam === 'day') { patch.flow = 'day'; patch.step = 0; }
+    else if (flowParam === 'event') {
+      patch.flow = 'event'; patch.step = 0;
+      const typeSlugs = ['cumpleanos', 'bautizo', 'babyshower', 'despedida', 'genderreveal', 'otro'];
+      const idx = typeSlugs.indexOf(p.get('type') || '');
+      if (idx >= 0) patch.evType = idx;
+    }
+    if (Object.keys(patch).length || Object.keys(sess).length) this.set({ ...sess, ...patch });
+  }
+  familyKids() {
+    const s = this.state.session;
+    if (s) return s.kids || [];
+    return (this.state.savedKids || []).map(([name, meta]) => ({ name, meta, bookedDates: [] }));
+  }
+  stageFor(s) { return s ? ((s.kids || []).length ? 'known' : 'addkid') : 'identify'; }
+  waiverValid() {
+    const s = this.state.session;
+    if (!s) return false;
+    if (this.props.simulateWaiverExpired) return false;
+    if (this.state.kidAdded) return true;
+    return (s.waiverVersion || '') === (this.props.waiverVersion ?? 'v2.1');
+  }
+  hadMembership() {
+    const s = this.state.session;
+    return !!(s && s.membership && s.membership.label && s.membership.label !== 'Sin membresía');
+  }
+  membershipActive() {
+    const s = this.state.session;
+    return !!(s && s.membership && s.membership.active && !this.props.simulateMembershipExpired);
+  }
+  overlapKids() {
+    const sel = this.selected();
+    return this.state.kidsSel.map(i => this.familyKids()[i]).filter(Boolean).filter(k => (k.bookedDates || []).some(d => sel.indexOf(d) >= 0));
+  }
+
+  goBack = () => {
+    const st = this.state;
+    if (!st.flow) { window.location.href = './Cocoon Home.dc.html'; return; }
+    if (st.flow === 'day' && st.step === 2) {
+      if (st.famStage === 'waiver') { this.set({ famStage: st.session ? this.stageFor(st.session) : 'new', formError: '' }); return; }
+      if (st.famStage === 'new') { this.set({ famStage: 'first', formError: '' }); return; }
+      if (st.famStage === 'first') { this.set({ famStage: 'identify', idError: '' }); return; }
+      if (st.famStage === 'otp') { this.set({ famStage: 'identify', otpValue: '', otpError: '', otpTries: 0, sessionNote: '' }); return; }
+      if (st.famStage === 'addkid' && (st.session && (st.session.kids || []).length)) { this.set({ famStage: 'known', formError: '' }); return; }
+      this.set({ step: 1 });
+      return;
+    }
+    if (st.step === 0) { this.set({ flow: null, step: 0 }); return; }
+    this.set({ step: st.step - 1, payError: '', formError: '', evError: '' });
+  };
+
+  advance = () => {
+    const st = this.state;
+    if (st.flow === 'day') {
+      if (st.step === 0) { this.set({ step: 1, loadingSlots: true }); setTimeout(() => this.set({ loadingSlots: false }), 750); return; }
+      if (st.step === 1) { this.set({ step: 2, famStage: this.stageFor(st.session), formError: '', kidsError: '' }); return; }
+      if (st.step === 2) return this.familyNext();
+      if (st.step === 3) return this.pay();
+    } else {
+      if (st.step === 1 && !this.eventValid()) { this.set({ evTouched: true, evError: 'Necesitamos saber qué celebras, el número de invitados, el horario preferido y tu contacto para poder responderte.' }); return; }
+      if (st.step === 2) { this.set({ step: 3, evError: '' }); return; }
+      if (st.step === 3) return this.payEventDeposit();
+      this.set({ step: st.step + 1, evError: '' });
+    }
+  };
+
+  familyNext() {
+    const st = this.state;
+    if (st.famStage === 'identify') {
+      const v = st.idValue.trim();
+      const email = /.+@.+\..+/.test(v);
+      const phone = /^[0-9+\-\s]{7,}$/.test(v);
+      if (!email && !phone) { this.set({ idError: 'Escribe un email válido o un teléfono de al menos 7 dígitos.' }); return; }
+      const key = email ? v.toLowerCase() : v.replace(/\D/g, '').slice(-8);
+      const exists = KNOWN_ACCOUNTS.indexOf(key) >= 0;
+      if (!exists) {
+        this.set({
+          idError: '', known: false, famStage: 'first',
+          adult: Object.assign({}, st.adult, email ? { email: v } : { telefono: v })
+        });
+        return;
+      }
+      this.set({ idError: '', known: true, famStage: 'otp', otpValue: '', otpError: '', otpTries: 0, otpLeft: 45 });
+      this.startOtpTimer();
+      return;
+    }
+    if (st.famStage === 'otp') {
+      if (st.otpLeft <= 0) { this.set({ otpError: 'Ese código ya expiró. Pide uno nuevo: tus fechas, tu hora y tu selección siguen guardadas.' }); return; }
+      if (!/^\d{6}$/.test(st.otpValue)) { this.set({ otpError: 'El código tiene 6 dígitos. Revísalo y vuelve a intentar.' }); return; }
+      if (st.otpValue === '000000') {
+        const tries = st.otpTries + 1;
+        this.set({ otpTries: tries, otpValue: '', otpError: tries >= 3 ? 'El código no coincide. Pide uno nuevo y te lo enviamos de inmediato.' : 'Ese código no coincide. Revisa el último mensaje que te enviamos.' });
+        return;
+      }
+      this.set({ verifying: true, otpError: '' });
+      setTimeout(() => {
+        clearInterval(this._otpT);
+        const s = this.loadSession() || DEMO_FAMILY;
+        this.saveSession(s);
+        const recovering = st.recovering;
+        this.set({
+          verifying: false, sessionNote: '', recovering: false,
+          famStage: recovering ? 'known' : this.stageFor(s),
+          step: recovering ? 3 : 2,
+          kidsSel: st.kidsSel.length ? st.kidsSel : ((s.kids || []).length ? [0] : [])
+        });
+      }, 800);
+      return;
+    }
+    if (st.famStage === 'first') { this.set({ famStage: 'new', formError: '' }); return; }
+    if (st.famStage === 'waiver') return this.waiverNext();
+    if (st.famStage === 'known') {
+      if (!st.kidsSel.length) { this.set({ kidsError: 'Elige al menos un niño para esta visita.' }); return; }
+      const clash = this.overlapKids();
+      if (clash.length) {
+        this.set({ kidsError: clash[0].name + ' ya tiene una reserva en una de estas fechas. Quítalo de la selección o cambia la fecha; no cobramos dos veces la misma visita.' });
+        return;
+      }
+      if (!this.waiverValid()) {
+        this.set({ kidsError: '', waiverOn: false, sigConfirmed: false, sigDrawn: false, sigNote: '', famStage: 'waiver' });
+        return;
+      }
+      this.set({ kidsError: '', step: 3 });
+      return;
+    }
+    // new family or adding a child to an existing family
+    const missingKid = st.newKids.some(k => !k.nombre.trim() || !k.apellido.trim() || !k.nacimiento);
+    if (missingKid) { this.set({ touched: true, formError: 'Falta completar nombre, apellido y fecha de nacimiento de cada niño.' }); return; }
+    if (st.famStage === 'addkid') {
+      const s = this.state.session;
+      const kids = (s.kids || []).concat(st.newKids.map(k => ({ name: k.nombre.trim(), meta: 'Perfil creado hoy', bookedDates: [] })));
+      const next = Object.assign({}, s, { kids });
+      this.saveSession(next);
+      this.set({
+        formError: '', touched: false, kidAdded: true,
+        newKids: [{ nombre: '', apellido: '', nacimiento: '' }],
+        famStage: 'known',
+        kidsSel: kids.map((k, i) => i).slice(-st.newKids.length)
+      });
+      return;
+    }
+    const a = st.adult;
+    if (!a.nombre.trim() || !a.apellido.trim() || !a.telefono.trim() || !/.+@.+\..+/.test(a.email)) {
+      this.set({ touched: true, formError: 'Revisa los datos del adulto responsable. El email debe ser válido.' }); return;
+    }
+    this.set({ formError: '', touched: false, famStage: 'waiver' });
+  }
+
+  waiverNext() {
+    const st = this.state;
+    if (!st.waiverOn) { this.set({ touched: true, formError: 'Para continuar necesitamos que aceptes el consentimiento y waiver.' }); return; }
+    if (!st.sigConfirmed) { this.set({ touched: true, formError: 'Falta confirmar la firma del adulto responsable.' }); return; }
+    const version = this.props.waiverVersion ?? 'v2.1';
+    if (st.session) {
+      this.saveSession(Object.assign({}, st.session, { waiverVersion: version, waiverUntil: 'marzo 2028' }));
+    } else {
+      const a = st.adult;
+      this.saveSession({
+        name: (a.nombre + ' ' + a.apellido).trim(),
+        email: a.email, phone: a.telefono,
+        membership: { label: 'Sin membresía', active: false, discount: 0, until: '' },
+        waiverVersion: version, waiverUntil: 'marzo 2028',
+        kids: st.newKids.map(k => ({ name: k.nombre.trim(), meta: 'Perfil creado hoy', bookedDates: [] }))
+      });
+    }
+    this.set({ formError: '', known: true, step: 3 });
+  }
+
+  eventValid() {
+    const st = this.state;
+    const num = +st.evGuests > 0;
+    const contact = st.session ? true : (st.evName.trim() && /^[0-9+\-\s]{7,}$/.test(st.evPhone) && /.+@.+\..+/.test(st.evEmail));
+    return st.evType !== null && num && st.evSlot && contact;
+  }
+
+  startOtpTimer() {
+    clearInterval(this._otpT);
+    this._otpT = setInterval(() => {
+      this.setState(s => {
+        if (s.otpLeft <= 1) { clearInterval(this._otpT); return { otpLeft: 0 }; }
+        return { otpLeft: s.otpLeft - 1 };
+      });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this._otpT); }
+
+  fmtCard(v) { const d = String(v).replace(/\D/g, '').slice(0, 16); return d.replace(/(.{4})/g, '$1 ').trim(); }
+  fmtExp(v) { const d = String(v).replace(/\D/g, '').slice(0, 4); return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d; }
+  fmtPhone(v) { const d = String(v).replace(/\D/g, '').slice(0, 8); return d.length > 4 ? d.slice(0, 4) + '-' + d.slice(4) : d; }
+  cardDigits() { return this.state.cardNumber.replace(/\D/g, ''); }
+  brandFor(digits) {
+    if (!digits) return null;
+    if (digits[0] === '4') return 'visa';
+    if (digits[0] === '5' || digits[0] === '2') return 'mastercard';
+    return null;
+  }
+  maskedNumber() {
+    const d = this.cardDigits();
+    const out = [];
+    for (let g = 0; g < 4; g++) {
+      let chunk = '';
+      for (let k = 0; k < 4; k++) { const idx = g * 4 + k; chunk += idx < d.length ? d[idx] : '•'; }
+      out.push(chunk);
+    }
+    return out.join(' ');
+  }
+
+  pay() {
+    const st = this.state;
+    if (this.props.simulateSessionExpiry && !st.recovering && st.session) {
+      clearInterval(this._otpT);
+      this.set({
+        step: 2, famStage: 'otp', recovering: true, otpValue: '', otpError: '', otpTries: 0, otpLeft: 45,
+        idValue: st.session.email || st.idValue,
+        sessionNote: 'Tu sesión expiró por seguridad antes de cobrar. Verifica el código y volvemos justo aquí: tus fechas, tu hora y los niños siguen seleccionados.'
+      });
+      this.startOtpTimer();
+      return;
+    }
+    if (st.payMethod === 'yappy') {
+      if (st.yappyPhone.replace(/\D/g, '').length < 7) { this.set({ payError: 'Escribe el celular asociado a tu cuenta Yappy para enviarte la solicitud de pago.', payErrorTitle: 'Falta tu celular' }); return; }
+    }
+    if (st.payMethod !== 'yappy') {
+      const digits = this.cardDigits();
+      if (digits.length < 16) { this.set({ payError: 'El número de tarjeta está incompleto. Debe tener 16 dígitos.', payErrorTitle: 'Revisa la tarjeta' }); return; }
+      if (!st.cardHolder.trim()) { this.set({ payError: 'Escribe el nombre del titular tal como aparece en la tarjeta.', payErrorTitle: 'Falta el titular' }); return; }
+      if (st.cardExp.replace(/\D/g, '').length < 4) { this.set({ payError: 'La fecha de vencimiento va en formato MM/AA.', payErrorTitle: 'Revisa el vencimiento' }); return; }
+      if (st.cardCvv.replace(/\D/g, '').length < 3) { this.set({ payError: 'El CVV son los 3 dígitos al reverso de tu tarjeta.', payErrorTitle: 'Revisa el CVV' }); return; }
+      if (digits.slice(0, 4) === '4000') {
+        this.set({ paying: true, payError: '' });
+        setTimeout(() => this.set({ paying: false, payErrorTitle: 'Tu banco rechazó el pago', payError: 'No se hizo ningún cargo. Puedes intentar con otra tarjeta o pagar con Yappy. Tus fechas siguen guardadas.' }), 1400);
+        return;
+      }
+    }
+    this.set({ paying: true, payError: '' });
+    setTimeout(() => this.set({ paying: false, step: 4 }), 1500);
+  }
+
+  payEventDeposit() {
+    const st = this.state;
+    if (!st.policyAccepted) { this.set({ payError: 'Acepta las condiciones de reserva, pago y cancelación para continuar.', payErrorTitle: 'Falta tu aceptación' }); return; }
+    if (st.payMethod === 'yappy') {
+      if (st.yappyPhone.replace(/\D/g, '').length < 7) { this.set({ payError: 'Escribe el celular asociado a tu cuenta Yappy para enviarte la solicitud de pago.', payErrorTitle: 'Falta tu celular' }); return; }
+    }
+    if (st.payMethod !== 'yappy') {
+      const digits = this.cardDigits();
+      if (digits.length < 16) { this.set({ payError: 'El número de tarjeta está incompleto. Debe tener 16 dígitos.', payErrorTitle: 'Revisa la tarjeta' }); return; }
+      if (!st.cardHolder.trim()) { this.set({ payError: 'Escribe el nombre del titular tal como aparece en la tarjeta.', payErrorTitle: 'Falta el titular' }); return; }
+      if (st.cardExp.replace(/\D/g, '').length < 4) { this.set({ payError: 'La fecha de vencimiento va en formato MM/AA.', payErrorTitle: 'Revisa el vencimiento' }); return; }
+      if (st.cardCvv.replace(/\D/g, '').length < 3) { this.set({ payError: 'El CVV son los 3 dígitos al reverso de tu tarjeta.', payErrorTitle: 'Revisa el CVV' }); return; }
+      if (digits.slice(0, 4) === '4000') {
+        this.set({ paying: true, payError: '' });
+        setTimeout(() => this.set({ paying: false, payErrorTitle: 'Tu banco rechazó el pago', payError: 'No se hizo ningún cargo. Puedes intentar con otra tarjeta o pagar con Yappy. Tu solicitud sigue guardada.' }), 1400);
+        return;
+      }
+    }
+    this.set({ paying: true, payError: '' });
+    setTimeout(() => this.set({ paying: false, step: 4 }), 1500);
+  }
+
+  // ---------- date picking ----------
+  pickDate(s) {
+    const st = this.state;
+    if (st.flow === 'event') {
+      const max = st.evFlex ? 3 : 1;
+      let next = st.evDates.slice();
+      if (next.indexOf(s) >= 0) next = next.filter(x => x !== s);
+      else if (next.length >= max) { next = st.evFlex ? next : [s]; if (st.evFlex) { this.set({ evDateNote: 'Ya tienes tres opciones. Quita una si quieres cambiarla.' }); return; } }
+      else next.push(s);
+      this.set({ evDates: next, evDateNote: '' });
+      return;
+    }
+    const has = st.dates.indexOf(s) >= 0;
+    const next = has ? st.dates.filter(x => x !== s) : st.dates.concat([s]);
+    const drop = {};
+    if (has) drop[s] = undefined;
+    this.set({ dates: next, dateNote: '' });
+  }
+
+  ADDONS = [
+    ['COFFEE', ['Coffee Package', 'Open Coffee']],
+    ['FOOD & DRINKS', ['Menú adultos / boquitas', 'Upgrade menú infantil', 'Open drinks naturales', 'Open soda']],
+    ['SWEETS', ['Dulce más grande', 'Cupcakes', 'Mesa de postres', 'Mesa de golosinas']],
+    ['CELEBRATE', ['Decoración premium', 'Relleno de piñata', 'Canastitas / recuerdos', 'Mesa de personalización', 'Character Visit', 'Welcome Sign personalizado']],
+    ['CAPTURE', ['Fotografía', 'Video']],
+    ['MORE TIME', ['Horario extendido']]
+  ];
+
+  buildAddons() {
+    const picked = this.state.evAddons || [];
+    return this.ADDONS.map(([title, items]) => ({
+      title,
+      items: items.map(label => ({
+        label,
+        on: picked.indexOf(label) >= 0,
+        onToggle: () => {
+          const cur = this.state.evAddons || [];
+          this.set({ evAddons: cur.indexOf(label) >= 0 ? cur.filter(x => x !== label) : cur.concat([label]) });
+        }
+      }))
+    }));
+  }
+
+  buildCal(offset) {
+    const st = this.state;
+    const base = new Date(st.year, st.month + (offset || 0), 1);
+    const m = base.getMonth(), y = base.getFullYear();
+    const first = new Date(y, m, 1).getDay();
+    const days = new Date(y, m + 1, 0).getDate();
+    const sel = this.selected();
+    const blank = { day: '', vis: 'hidden', disabled: true, bg: 'transparent', border: 'transparent', color: '#6D6D6D', radius: '11px', weight: '500', cursor: 'default', strike: 'none', aria: '', title: '', on: false, onPick: () => {} };
+    const cells = [];
+    for (let k = 0; k < first; k++) cells.push(Object.assign({}, blank));
+    for (let d = 1; d <= days; d++) {
+      const s = this.iso(y, m, d);
+      const isBlocked = this.blocked(s);
+      const on = sel.indexOf(s) >= 0;
+      const evIdx = st.flow === 'event' ? st.evDates.indexOf(s) : -1;
+      let bg = '#EFE6D4', border = 'rgba(58,50,43,.1)', color = '#3A322B', radius = '11px', weight = '500';
+      if (isBlocked) { bg = '#F5ECDA'; border = 'rgba(58,50,43,.14)'; color = '#B3A692'; }
+      if (on) {
+        bg = evIdx > 0 ? '#D4A34E' : '#9C6240'; border = bg; color = '#FDFAF4'; weight = '700';
+        if (st.flow !== 'event') {
+          const L = this.adjacentSelected(s, -1), R = this.adjacentSelected(s, 1);
+          if (L && R) radius = '3px';
+          else if (L) radius = '3px 13px 13px 3px';
+          else if (R) radius = '13px 3px 3px 13px';
+        }
+      }
+      cells.push({
+        day: d, vis: 'visible', disabled: isBlocked, bg, border, color, radius, weight,
+        cursor: isBlocked ? 'not-allowed' : 'pointer',
+        strike: isBlocked && !this.past(s) ? 'line-through' : 'none',
+        on,
+        aria: d + ' de ' + MES[m] + (isBlocked ? ', no disponible' : on ? ', seleccionado' : ''),
+        title: this.past(s) ? 'Fecha pasada' : this.closed(s) ? 'Cocoon cierra los lunes' : this.full(s) ? 'Sin espacio disponible' : '',
+        onPick: isBlocked ? () => {} : () => this.pickDate(s)
+      });
+    }
+    const atStart = st.year === 2026 && st.month <= 8;
+    return {
+      cells, month: m, year: y, label: MES[m].charAt(0).toUpperCase() + MES[m].slice(1) + ' ' + y,
+      monthOpts: MES.map((label, i) => ({ value: i, label: label.charAt(0).toUpperCase() + label.slice(1) })),
+      yearOpts: [2026, 2027].map(v => ({ value: v, label: String(v) })),
+      onMonth: e => this.set({ month: +e.target.value }),
+      onYear: e => this.set({ year: +e.target.value }),
+      prevBorder: atStart ? 'rgba(58,50,43,.08)' : 'rgba(58,50,43,.18)',
+      prevCursor: atStart ? 'not-allowed' : 'pointer',
+      prevOpacity: atStart ? '.4' : '1',
+      onPrev: atStart ? () => {} : () => this.set(st.month === 0 ? { month: 11, year: st.year - 1 } : { month: st.month - 1, year: st.year }),
+      onNext: () => this.set(st.month === 11 ? { month: 0, year: st.year + 1 } : { month: st.month + 1, year: st.year })
+    };
+  }
+
+  // ---------- signature ----------
+  sigRef = el => {
+    if (!el || el.__wired) return;
+    el.__wired = true;
+    const dpr = window.devicePixelRatio || 1;
+    const size = () => { const r = el.getBoundingClientRect(); el.width = r.width * dpr; el.height = r.height * dpr; const c = el.getContext('2d'); c.scale(dpr, dpr); c.lineWidth = 2.4; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#3A322B'; };
+    size();
+    let drawing = false;
+    const pos = e => { const r = el.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    el.addEventListener('pointerdown', e => {
+      drawing = true; el.setPointerCapture(e.pointerId);
+      const ctx = el.getContext('2d'); const p = pos(e); ctx.beginPath(); ctx.moveTo(p[0], p[1]);
+      if (!this.state.sigDrawn) this.set({ sigDrawn: true, sigConfirmed: false, sigNote: '' });
+    });
+    el.addEventListener('pointermove', e => { if (!drawing) return; const ctx = el.getContext('2d'); const p = pos(e); ctx.lineTo(p[0], p[1]); ctx.stroke(); });
+    el.addEventListener('pointerup', () => { drawing = false; });
+    el.addEventListener('pointerleave', () => { drawing = false; });
+    this._sigEl = el;
+  };
+  clearSig = () => {
+    const el = this._sigEl;
+    if (el) { const c = el.getContext('2d'); c.clearRect(0, 0, el.width, el.height); }
+    this.set({ sigDrawn: false, sigConfirmed: false, sigNote: '' });
+  };
+  confirmSig = () => {
+    const st = this.state;
+    if (!st.sigDrawn && !st.sigTyped.trim()) {
+      this.set({ sigNote: 'La firma está vacía. Traza tu firma o escribe tu nombre completo abajo.', sigNoteColor: '#9C6240' });
+      return;
+    }
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    this.set({ sigConfirmed: true, sigNote: 'Firma registrada · ' + now.getDate() + ' de ' + MES[now.getMonth()] + ' ' + now.getFullYear() + ', ' + hh + ' · versión ' + (this.props.waiverVersion ?? 'v2.1'), sigNoteColor: '#5E6B22' });
+  };
+
+  renderVals() {
+    const st = this.state;
+    const sel = this.selected();
+    const day = st.flow === 'day', ev = st.flow === 'event';
+    const counts = this.props.showAvailability ?? true;
+
+    const gapN = day ? this.gapDays() : 0;
+    const calHint = ev
+      ? (st.evFlex ? 'Toca tu fecha preferida y hasta dos alternativas.' : 'Toca tu fecha preferida.')
+      : sel.length === 0 ? 'Toca un día. Puedes seguir tocando más días o marcar el primero y el último de un rango.'
+      : sel.length === 1 ? '1 día seleccionado. Toca otro día para añadirlo, o el mismo para quitarlo.'
+      : sel.length + ' días seleccionados. Toca un día para quitarlo.';
+    const chip = on => ({ bg: on ? '#9C6240' : '#FDFAF4', border: on ? '#9C6240' : 'rgba(58,50,43,.18)', color: on ? '#FDFAF4' : '#3A322B', on });
+
+    // slots
+    const slots = SLOT_TIMES.map(t => {
+      const free = SLOT_FREE[t];
+      const on = st.time === t;
+      return {
+        label: t,
+        sub: free === 0 ? 'Sin espacio' : counts ? free + ' espacios' : 'Disponible',
+        disabled: free === 0,
+        on,
+        bg: on ? '#9C6240' : free === 0 ? '#F5ECDA' : '#FDFAF4',
+        border: on ? '#9C6240' : 'rgba(58,50,43,.14)',
+        color: on ? '#FDFAF4' : free === 0 ? '#C4B8A4' : '#3A322B',
+        subColor: on ? '#FDFAF4' : free === 0 ? '#C4B8A4' : '#6D6D6D',
+        cursor: free === 0 ? 'not-allowed' : 'pointer',
+        onPick: free === 0 ? () => {} : () => this.set({ time: t, timeError: '' })
+      };
+    });
+
+    const perDayRows = sel.map(s => ({
+      label: this.longDate(s),
+      opts: SLOT_TIMES.filter(t => SLOT_FREE[t] > 0).map(t => {
+        const on = (st.timePerDate[s] || st.time) === t;
+        const c = chip(on);
+        return { label: t, on, bg: c.bg, border: c.border, color: c.color, disabled: false, cursor: 'pointer', onPick: () => this.setState(p => ({ timePerDate: Object.assign({}, p.timePerDate, { [s]: t }) })) };
+      })
+    }));
+
+    // bar
+    let barTitle = '', barSub = '', nextLabel = 'Continuar', disabled = false;
+    if (day) {
+      if (st.step === 0) {
+        barTitle = sel.length ? (sel.length === 1 ? '1 día seleccionado' : sel.length + ' días seleccionados') : 'Elige tus fechas';
+        barSub = sel.length ? this.datesLabel() : 'Un día, varios días o un rango';
+        disabled = !sel.length;
+      } else if (st.step === 1) {
+        barTitle = st.time ? (st.perDay ? 'Horarios personalizados' : st.time + (sel.length > 1 ? ' para los ' + sel.length + ' días' : '')) : 'Elige la hora de llegada';
+        barSub = this.datesLabel();
+        disabled = !st.time || st.loadingSlots;
+      } else if (st.step === 2) {
+        const stage = st.famStage;
+        barTitle = stage === 'identify' ? 'Continuemos con tu familia'
+          : stage === 'otp' ? (st.recovering ? 'Retomamos tu reserva' : 'Verifica el código')
+          : stage === 'first' ? 'Primera visita'
+          : stage === 'known' ? (this.kidNames() === '—' ? 'Elige quién viene' : this.kidNames())
+          : stage === 'waiver' ? 'Consentimiento y firma'
+          : stage === 'addkid' ? 'Agrega a tu pequeño'
+          : 'Datos de tu familia';
+        barSub = stage === 'known'
+          ? (st.kidsSel.length ? st.kidsSel.length + (st.kidsSel.length === 1 ? ' niño' : ' niños') + ' · ' + this.money(this.totalNum()) + (this.multiNum() > 0 ? ' con 5% multi-ticket' : '') : 'Selecciona al menos un niño')
+          : this.datesLabel() + (st.time ? ' · ' + st.time : '');
+        nextLabel = stage === 'identify' ? 'Continuar'
+          : stage === 'otp' ? (st.verifying ? 'Verificando…' : 'Verificar')
+          : stage === 'first' ? 'Crear mi familia Cocoon'
+          : stage === 'new' ? 'Continuar al consentimiento'
+          : stage === 'addkid' ? 'Guardar y continuar'
+          : stage === 'waiver' ? 'Continuar al pago'
+          : 'Continuar al pago';
+        disabled = st.verifying;
+      } else if (st.step === 3) {
+        barTitle = this.money(this.totalNum());
+        barSub = this.ticketCount() + (this.ticketCount() === 1 ? ' Day Pass' : ' Day Passes') + ' · ' + this.kidNames();
+        nextLabel = st.paying ? 'Procesando pago…' : 'Pagar y reservar';
+        disabled = st.paying;
+      }
+    } else if (ev) {
+      if (st.step === 0) { barTitle = st.evDates.length ? (st.evDates.length === 1 ? 'Fecha preferida' : st.evDates.length + ' opciones de fecha') : 'Elige tu fecha preferida'; barSub = st.evDates.length ? this.longDate(st.evDates[0]) : 'Puedes añadir alternativas'; disabled = !st.evDates.length; }
+      else if (st.step === 1) { barTitle = st.evType !== null ? EVENTS[st.evType][0] : 'Cuéntanos la celebración'; barSub = st.evGuests ? st.evGuests + ' invitados aprox.' : 'Depósito de $400 en el siguiente paso'; }
+      else if (st.step === 2) { barTitle = st.evType !== null ? EVENTS[st.evType][0] : 'Tu solicitud'; barSub = st.evDates.length ? this.longDate(st.evDates[0]) : ''; nextLabel = 'Continuar al pago'; }
+      else if (st.step === 3) { barTitle = this.money(400); barSub = 'Depósito para reservar tu fecha'; nextLabel = st.paying ? 'Procesando pago…' : 'Pagar depósito y reservar'; disabled = st.paying || !st.policyAccepted; }
+    }
+
+    const railDay = ['FECHA', 'HORA', st.session ? 'NIÑOS' : 'FAMILIA', 'PAGO'];
+    const railEv = ['FECHA', 'CELEBRACIÓN', 'REVISIÓN', 'DEPÓSITO'];
+    const railSrc = ev ? railEv : railDay;
+    const rail = railSrc.map((label, i) => {
+      const active = i <= st.step;
+      return { label, bg: active ? '#9C6240' : 'rgba(58,50,43,.14)', color: active ? '#9C6240' : '#6D6D6D' };
+    });
+
+    const adultDefs = [['NOMBRE', 'nombre', 'text', 'text'], ['APELLIDO', 'apellido', 'text', 'text'], ['TELÉFONO', 'telefono', 'tel', 'tel'], ['EMAIL', 'email', 'email', 'email']];
+
+    const evPhoneShown = st.evPhone.trim() || '+507 6000-0000';
+
+    return {
+      // routing
+      isChoose: !st.flow,
+      isDate: day && st.step === 0,
+      isTime: day && st.step === 1,
+      isFamily: day && st.step === 2,
+      isPay: (day && st.step === 3) || (ev && st.step === 3),
+      isDone: day && st.step === 4,
+      isEvDate: ev && st.step === 0,
+      isEvDetails: ev && st.step === 1,
+      isEvReview: ev && st.step === 2,
+      isEvDone: ev && st.step === 4,
+      showRail: !!st.flow && st.step < 4,
+      showBar: !!st.flow && st.step < 4,
+      rail,
+      backLabel: !st.flow ? 'Inicio' : 'Atrás',
+      goBack: this.goBack,
+      onNext: this.advance,
+      nextLabel, barTitle, barSub,
+      nextDisabled: disabled,
+      nextBg: disabled ? '#D8CCB6' : '#9C6240',
+      nextColor: disabled ? '#8D8271' : '#FDFAF4',
+      nextCursor: disabled ? 'not-allowed' : 'pointer',
+      nextOpacity: disabled ? '.85' : '1',
+      pickDay: () => this.set({ flow: 'day', step: 0 }),
+      pickEvent: () => this.set({ flow: 'event', step: 0 }),
+
+      // calendar
+      weekdays: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+      shellWidth: ev ? '820px' : '1050px',
+      cal: this.buildCal(0),
+      addonGroups: this.buildAddons(),
+      showAddons: st.evType === 0,
+      calHint: calHint,
+      rangeSuggest: gapN > 0 ? 'Incluir también los ' + gapN + (gapN === 1 ? ' día intermedio' : ' días intermedios') : '',
+      fillRange: () => this.set({ dates: this.expand(sel[0], sel[sel.length - 1]) }),
+      dateNote: st.dateNote,
+
+      // time
+      timeSubtitle: sel.length > 1 ? 'Aplicamos la misma hora a los ' + sel.length + ' días. Puedes cambiarla por día si lo necesitas.' : 'La sesión dura 3 horas desde la hora de llegada.',
+      loadingSlots: st.loadingSlots,
+      slotsReady: !st.loadingSlots,
+      skeletons: [1, 2, 3, 4, 5, 6],
+      slots,
+      timeError: st.timeError,
+      manyDays: sel.length > 1 && !!st.time,
+      sameTimeLine: st.time ? st.time + ' para los ' + sel.length + ' días' : '',
+      perDay: st.perDay,
+      perDayLabel: st.perDay ? 'Usar la misma hora' : 'Cambiar horario por día',
+      togglePerDay: () => this.set({ perDay: !st.perDay }),
+      perDayRows,
+
+      // family
+      famIdentify: st.famStage === 'identify',
+      famOtp: st.famStage === 'otp',
+      famFirst: st.famStage === 'first',
+      famKnown: st.famStage === 'known',
+      famForm: st.famStage === 'new' || st.famStage === 'addkid',
+      famWaiver: st.famStage === 'waiver',
+      otpTitle: st.recovering ? 'Confirmemos que eres tú' : '¡Qué bueno verte de nuevo!',
+      otpEyebrow: st.recovering ? 'SESIÓN EXPIRADA' : 'FAMILIA ENCONTRADA',
+      otpKeepNote: st.sessionNote,
+      keptRows: [
+        { label: 'FECHAS', value: this.datesLabel() || '—' },
+        { label: 'HORA', value: st.perDay ? 'Personalizada por día' : (st.time || '—') },
+        { label: 'CONTACTO', value: st.idValue || '—' }
+      ],
+      onbEyebrow: st.famStage === 'addkid' ? 'TU FAMILIA COCOON' : 'CREA TU FAMILIA COCOON · 1 DE 2',
+      onbTitle: st.famStage === 'addkid' ? 'Agrega a tu pequeño' : 'Creemos tu familia Cocoon',
+      onbSub: st.famStage === 'addkid'
+        ? 'Lo guardamos en el perfil de tu familia y queda disponible para todas tus próximas visitas.'
+        : 'Usamos el contacto que ya escribiste. Solo faltan estos datos y tendrás todo listo para futuras visitas.',
+      showAdult: st.famStage === 'new',
+      adultHint: 'Ya tenemos tu contacto: ' + (st.idValue || 'el que escribiste antes') + '.',
+      knownEyebrow: this.membershipActive() ? 'HOLA, ' + String((st.session && st.session.name) || '').split(' ')[0].toUpperCase() : 'TU FAMILIA COCOON',
+      knownSub: this.waiverValid()
+        ? 'Tu waiver y tus beneficios están al día. Elige a quién inscribimos en esta visita.'
+        : 'Elige a quién inscribimos en esta visita. Después te pediremos firmar el waiver actualizado.',
+      famChips: (() => {
+        const s = st.session;
+        if (!s) return [];
+        const out = [];
+        if (this.membershipActive()) out.push({ label: s.membership.label + ' · activa hasta ' + s.membership.until, bg: '#EFE6D4', border: '#BAB25A', color: '#5E6B22' });
+        else if (this.hadMembership()) out.push({ label: 'Membresía vencida · tarifa regular', bg: '#FDF3E7', border: '#D4A34E', color: '#9C6240' });
+        else out.push({ label: 'Tarifa regular de Day Pass', bg: '#FDFAF4', border: 'rgba(58,50,43,.14)', color: '#6D6D6D' });
+        out.push(this.waiverValid()
+          ? { label: 'Waiver vigente hasta ' + (s.waiverUntil || 'marzo 2027'), bg: '#FDFAF4', border: 'rgba(58,50,43,.14)', color: '#6D6D6D' }
+          : { label: 'Waiver por actualizar', bg: '#FDF3E7', border: '#D4A34E', color: '#9C6240' });
+        out.push({ label: 'Datos, contacto y firma ya guardados', bg: '#FDFAF4', border: 'rgba(58,50,43,.14)', color: '#6D6D6D' });
+        return out;
+      })(),
+      waiverIntro: st.session
+        ? (this.props.simulateWaiverExpired ? 'Tu waiver anterior venció. Firmamos la versión vigente y queda listo por otro año.' : 'Actualizamos la versión del documento, así que necesitamos una firma nueva. Es la última vez con esta versión.')
+        : 'Lo firmas una sola vez. En tus próximas visitas ya no te lo pediremos.',
+      idValue: st.idValue,
+      idError: st.idError,
+      idBorder: st.idError ? '#9C6240' : 'rgba(58,50,43,.16)',
+      onIdChange: e => this.set({ idValue: e.target.value, idError: '' }),
+      otpValue: st.otpValue,
+      otpError: st.otpError,
+      otpBorder: st.otpError ? '#9C6240' : 'rgba(58,50,43,.16)',
+      onOtpChange: e => this.set({ otpValue: e.target.value.replace(/\D/g, '').slice(0, 6), otpError: '' }),
+      otpTimer: st.otpLeft > 0 ? 'El código expira en ' + st.otpLeft + 's' : 'El código expiró',
+      resendOtp: () => { this.set({ otpLeft: 45, otpValue: '', otpError: '' }); this.startOtpTimer(); },
+      waiverUntil: 'marzo 2027',
+      savedKids: this.familyKids().map((kid, i) => {
+        const on = st.kidsSel.indexOf(i) >= 0;
+        const clash = (kid.bookedDates || []).filter(d => sel.indexOf(d) >= 0);
+        const name = kid.name, meta = kid.meta;
+        return {
+          name, meta, on,
+          warn: clash.length ? 'Ya tiene una reserva el ' + this.dayNum(clash[0]) + ' de ' + this.monthName(clash[0]) + '. Quítalo de esta visita o elige otra fecha.' : '',
+          bg: on ? '#EFE6D4' : '#FDFAF4',
+          border: on ? '#9C6240' : 'rgba(58,50,43,.12)',
+          markBorder: on ? '#9C6240' : 'rgba(58,50,43,.25)',
+          markBg: on ? '#9C6240' : 'transparent',
+          onToggle: () => this.setState(p => ({ kidsSel: p.kidsSel.indexOf(i) >= 0 ? p.kidsSel.filter(x => x !== i) : p.kidsSel.concat([i]), kidsError: '' }))
+        };
+      }),
+      kidsError: st.kidsError,
+      addKidKnown: () => this.set({ famStage: 'addkid', formError: '', touched: false, newKids: [{ nombre: '', apellido: '', nacimiento: '' }] }),
+      newKids: st.newKids.map((k, i) => {
+        const parts = (k.nacimiento || '').split('-');
+        const anio = parts[0] || '', mes = parts[1] || '', dia = parts[2] || '';
+        const setPart = (part, v) => this.setState(p => ({
+          newKids: p.newKids.map((x, j) => {
+            if (j !== i) return x;
+            const cur = (x.nacimiento || '').split('-');
+            const next = { anio: cur[0] || '', mes: cur[1] || '', dia: cur[2] || '' };
+            next[part] = v;
+            const nacimiento = (next.anio && next.mes && next.dia) ? next.anio + '-' + next.mes + '-' + next.dia : '';
+            return Object.assign({}, x, { nacimiento });
+          })
+        }));
+        const yearNow = 2026;
+        return {
+          title: i === 0 ? 'Niño 1' : 'Niño ' + (i + 1),
+          nombre: k.nombre, apellido: k.apellido, nacimiento: k.nacimiento,
+          dia, mes, anio,
+          dayOptions: Array.from({ length: 31 }, (_, n) => String(n + 1).padStart(2, '0')),
+          monthOptions: Array.from({ length: 12 }, (_, n) => String(n + 1).padStart(2, '0')),
+          yearOptions: Array.from({ length: 20 }, (_, n) => String(yearNow - n)),
+          nombreBorder: st.touched && !k.nombre.trim() ? '#9C6240' : 'rgba(58,50,43,.16)',
+          apellidoBorder: st.touched && !k.apellido.trim() ? '#9C6240' : 'rgba(58,50,43,.16)',
+          nacimientoBorder: st.touched && !k.nacimiento ? '#9C6240' : 'rgba(58,50,43,.16)',
+          removeDisplay: st.newKids.length > 1 ? 'inline-flex' : 'none',
+          onRemove: () => this.setState(p => ({ newKids: p.newKids.filter((x, j) => j !== i) })),
+          onNombre: e => { const v = e.target.value; this.setState(p => ({ newKids: p.newKids.map((x, j) => j === i ? Object.assign({}, x, { nombre: v }) : x) })); },
+          onApellido: e => { const v = e.target.value; this.setState(p => ({ newKids: p.newKids.map((x, j) => j === i ? Object.assign({}, x, { apellido: v }) : x) })); },
+          onDia: e => setPart('dia', e.target.value),
+          onMes: e => setPart('mes', e.target.value),
+          onAnio: e => setPart('anio', e.target.value)
+        };
+      }),
+      addKidNew: () => this.setState(p => ({ newKids: p.newKids.concat([{ nombre: '', apellido: '', nacimiento: '' }]) })),
+      adultFields: adultDefs.map(([label, key, type, mode]) => ({
+        label, type, mode, value: st.adult[key],
+        border: st.touched && !String(st.adult[key]).trim() ? '#9C6240' : 'rgba(58,50,43,.16)',
+        onChange: e => { const v = e.target.value; this.setState(p => ({ adult: Object.assign({}, p.adult, { [key]: v }) })); }
+      })),
+      waiverVersion: this.props.waiverVersion ?? 'v2.1',
+      waiverOn: st.waiverOn,
+      
+      waiverBg: st.waiverOn ? '#EFE6D4' : '#FFFDF8',
+      waiverBorder: st.touched && !st.waiverOn ? '#9C6240' : st.waiverOn ? '#9C6240' : 'rgba(58,50,43,.14)',
+      waiverMarkBorder: st.waiverOn ? '#9C6240' : 'rgba(58,50,43,.25)',
+      waiverMarkBg: st.waiverOn ? '#9C6240' : 'transparent',
+      toggleWaiver: () => this.set({ waiverOn: !st.waiverOn, formError: '' }),
+      sigRef: this.sigRef,
+      sigHintDisplay: st.sigDrawn ? 'none' : 'block',
+      sigBorder: st.sigConfirmed ? '#BAB25A' : st.touched && !st.sigConfirmed ? '#9C6240' : 'rgba(58,50,43,.16)',
+      sigCtaBg: st.sigConfirmed ? '#BAB25A' : '#9C6240',
+      sigCtaColor: '#FDFAF4',
+      sigCtaLabel: st.sigConfirmed ? 'Firma confirmada' : 'Confirmar firma',
+      clearSig: this.clearSig,
+      confirmSig: this.confirmSig,
+      sigNote: st.sigNote,
+      sigNoteColor: st.sigNoteColor,
+      sigTyped: st.sigTyped,
+      onSigTyped: e => this.set({ sigTyped: e.target.value, sigConfirmed: false }),
+      formError: st.formError,
+
+      // pay
+      summaryRows: ev ? [
+        { label: 'CELEBRACIÓN', value: st.evType !== null ? EVENTS[st.evType][0] : '—' },
+        { label: 'FECHA PREFERIDA', value: st.evDates.length ? this.longDate(st.evDates[0]) : '—' },
+        { label: 'INVITADOS', value: (st.evGuests || '—') + ' en total' },
+        { label: 'HORARIO', value: st.evSlot || '—' },
+        { label: 'CONTACTO', value: st.session ? (st.session.name + ' · ' + (st.session.phone || st.session.email)) : [st.evName, st.evPhone, st.evEmail].filter(Boolean).join(' · ') || '—' }
+      ] : [
+        { label: 'VISITA', value: 'Day Pass · ' + sel.length + (sel.length === 1 ? ' día' : ' días') },
+        { label: 'FECHAS', value: this.datesLabel() || '—' },
+        { label: 'HORA DE LLEGADA', value: st.perDay ? 'Personalizada por día' : (st.time || '—') },
+        { label: 'NIÑOS', value: this.kidNames() + ' · ' + this.kidCount() + (this.kidCount() === 1 ? ' niño' : ' niños') },
+        { label: 'PASES', value: this.ticketCount() + (this.ticketCount() === 1 ? ' Day Pass' : ' Day Passes') + (this.multiNum() > 0 ? ' · 5% multi-ticket aplicado' : '') },
+        { label: 'BENEFICIOS', value: this.membershipActive() ? st.session.membership.label + ' · descuento aplicado automáticamente' : (this.multiNum() > 0 ? 'Descuento multi-ticket automático' : 'Tarifa regular') },
+        { label: 'ADULTO RESPONSABLE', value: st.session ? st.session.name : (st.adult.nombre + ' ' + st.adult.apellido).trim() || '—' }
+      ],
+      priceRows: ev ? [
+        { label: 'Depósito para reservar la fecha', value: this.money(400) }
+      ] : (() => {
+        const split = this.ticketSplit();
+        const rows = [];
+        if (split.week) rows.push({ label: 'Day Pass lunes a viernes × ' + split.week + ' · ' + this.money(this.weekdayRate()), value: this.money(split.week * this.weekdayRate()) });
+        if (split.end) rows.push({ label: 'Day Pass sábado y domingo × ' + split.end + ' · ' + this.money(this.weekendRate()), value: this.money(split.end * this.weekendRate()) });
+        if (rows.length > 1 || this.multiNum() > 0 || this.discountNum() > 0) rows.push({ label: 'Subtotal', value: this.money(this.subtotalNum()) });
+        if (this.multiNum() > 0) rows.push({ label: 'Descuento multi-ticket · −' + Math.round(this.multiPct() * 100) + '% por ' + this.ticketCount() + ' pases', value: '−' + this.money(this.multiNum()) });
+        if (this.discountNum() > 0) rows.push({ label: st.session.membership.label + ' · −' + Math.round((st.session.membership.discount || 0) * 100) + '%', value: '−' + this.money(this.discountNum()) });
+        rows.push({ label: 'Impuestos incluidos', value: this.money(0) });
+        return rows;
+      })(),
+      ticketLine: this.ticketCount() + (this.ticketCount() === 1 ? ' Day Pass' : ' Day Passes'),
+      multiOn: this.multiNum() > 0,
+      benefitNote: ev ? 'Este pago corresponde únicamente al depósito para separar la fecha.' : (this.membershipActive()
+        ? 'El descuento de tu membresía y el de multi-ticket se aplican solos; no necesitas ningún código.'
+        : (this.hadMembership() ? 'Tu membresía está vencida, así que aplicamos la tarifa regular. Puedes renovarla desde Mi Cocoon cuando quieras.' : '')),
+      total: ev ? this.money(400) : this.money(this.totalNum()),
+      totalLabel: ev ? 'Total a pagar hoy' : 'Total',
+      payHeading: ev ? 'Paga tu depósito' : 'Revisa tu visita',
+      paySubtitle: ev ? 'El depósito de $400 separa tu fecha. Consulta las condiciones de reserva y calendario de pagos antes de continuar.' : 'Todo esto es lo que vas a reservar. Sin cargos escondidos.',
+      showPolicyLink: ev,
+      showAcceptCheckbox: ev,
+      policyAccepted: st.policyAccepted,
+      togglePolicyAccepted: () => this.set({ policyAccepted: !st.policyAccepted, payError: '' }),
+      showPolicyModal: st.showPolicyModal,
+      openPolicyModal: () => this.set({ showPolicyModal: true }),
+      closePolicyModal: () => this.set({ showPolicyModal: false }),
+      payMethods: [
+        { key: 'visa', label: 'Visa', sub: 'Débito o crédito', logo: 'uploads/Visa_Inc.-Logo.wine.svg', logoH: '25px', shape: 'uploads/IMG_6822.PNG', selBg: 'linear-gradient(150deg,#FDFAF4 0%,#EFE6D4 100%)' },
+        { key: 'mastercard', label: 'Mastercard', sub: 'Débito o crédito', logo: 'uploads/Mastercard-Logo.wine.svg', logoH: '29px', shape: 'uploads/IMG_6820.PNG', selBg: 'linear-gradient(150deg,#E6EDF2 0%,#C3D2DC 100%)' },
+        { key: 'yappy', label: 'Yappy', sub: 'Pago desde tu banco', logo: 'uploads/yappy-color-portrait.svg', logoH: '34px', shape: 'uploads/IMG_6818.PNG', selBg: 'linear-gradient(150deg,#FFFDF8 0%,#F5ECDA 100%)' }
+      ].map(m => {
+        const on = st.payMethod === m.key;
+        return Object.assign({}, m, {
+          on,
+          bg: on ? m.selBg : '#FDFAF4',
+          border: on ? '#9C6240' : 'rgba(58,50,43,.12)',
+          shadow: on ? '0 20px 38px -26px rgba(58,50,43,.6)' : '0 6px 16px -14px rgba(58,50,43,.4)',
+          lift: on ? 'translateY(-4px)' : 'none',
+          shapeOpacity: on ? '.5' : '.15',
+          logoOpacity: on ? '1' : '.6',
+          subColor: on ? '#3A322B' : '#6D6D6D',
+          onPick: () => this.set({ payMethod: m.key, payError: '', brandNote: '', focusField: '' })
+        });
+      }),
+      showCardPreview: st.payMethod !== 'yappy',
+      showYappyPreview: st.payMethod === 'yappy',
+      cardForm: st.payMethod !== 'yappy',
+      yappyForm: st.payMethod === 'yappy',
+      flipTransform: st.focusField === 'cvv' ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      cardBg: st.payMethod === 'mastercard' ? 'linear-gradient(155deg,#DCE6EC 0%,#A9BECD 100%)' : 'linear-gradient(155deg,#FFFDF8 0%,#EFE6D4 100%)',
+      cardBackBg: st.payMethod === 'mastercard' ? 'linear-gradient(155deg,#C3D2DC 0%,#9CB4C7 100%)' : 'linear-gradient(155deg,#F5ECDA 0%,#E2D6BF 100%)',
+      cardEdge: st.payMethod === 'mastercard' ? 'rgba(46,58,67,.22)' : 'rgba(58,50,43,.14)',
+      cardInk: st.payMethod === 'mastercard' ? '#25333C' : '#3A322B',
+      cardMuted: st.payMethod === 'mastercard' ? 'rgba(37,51,60,.62)' : '#8A7B66',
+      cardLogo: st.payMethod === 'mastercard' ? 'uploads/Mastercard-Logo.wine.svg' : 'uploads/Visa_Inc.-Logo.wine.svg',
+      cardShapeA: st.payMethod === 'mastercard' ? 'uploads/IMG_6817.PNG' : 'uploads/IMG_6822.PNG',
+      cardShapeB: st.payMethod === 'mastercard' ? 'uploads/IMG_6820.PNG' : 'uploads/IMG_6819.PNG',
+      zNumber: st.focusField === 'number' ? 'rgba(156,98,64,.16)' : 'transparent',
+      zName: st.focusField === 'name' ? 'rgba(156,98,64,.16)' : 'transparent',
+      zExp: st.focusField === 'exp' ? 'rgba(156,98,64,.16)' : 'transparent',
+      zCvv: st.focusField === 'cvv' ? 'rgba(156,98,64,.2)' : 'rgba(253,250,244,.75)',
+      cvvEdge: st.focusField === 'cvv' ? '#9C6240' : 'rgba(58,50,43,.14)',
+      zPhone: st.focusField === 'phone' ? 'rgba(156,98,64,.14)' : '#FFFDF8',
+      phoneEdge: st.focusField === 'phone' ? '#9C6240' : 'rgba(58,50,43,.12)',
+      numberDisplay: this.maskedNumber(),
+      holderDisplay: st.cardHolder.trim() ? st.cardHolder.trim().toUpperCase() : 'NOMBRE DEL TITULAR',
+      expDisplay: st.cardExp || 'MM/AA',
+      cvvDisplay: st.cardCvv ? st.cardCvv.replace(/\D/g, '').slice(0, 4) : '•••',
+      yappyDisplay: st.yappyPhone ? '+507 ' + st.yappyPhone : '+507 0000-0000',
+      cardNumber: st.cardNumber, cardExp: st.cardExp, cardCvv: st.cardCvv, cardHolder: st.cardHolder, yappyPhone: st.yappyPhone,
+      cardBorder: st.payError && /tarjeta/i.test(st.payErrorTitle || '') ? '#9C6240' : 'rgba(58,50,43,.16)',
+      holderBorder: st.payErrorTitle === 'Falta el titular' ? '#9C6240' : 'rgba(58,50,43,.16)',
+      expBorder: st.payErrorTitle === 'Revisa el vencimiento' ? '#9C6240' : 'rgba(58,50,43,.16)',
+      cvvBorder: st.payErrorTitle === 'Revisa el CVV' ? '#9C6240' : 'rgba(58,50,43,.16)',
+      yappyBorder: st.payErrorTitle === 'Falta tu celular' ? '#9C6240' : 'rgba(58,50,43,.16)',
+      brandNote: st.brandNote,
+      onCardNumber: e => {
+        const formatted = this.fmtCard(e.target.value);
+        const brand = this.brandFor(formatted.replace(/\D/g, ''));
+        const next = { cardNumber: formatted, payError: '' };
+        if (brand && brand !== this.state.payMethod) {
+          next.payMethod = brand;
+          next.brandNote = brand === 'visa' ? 'Detectamos una tarjeta Visa y actualizamos tu tarjeta Cocoon.' : 'Detectamos una tarjeta Mastercard y actualizamos tu tarjeta Cocoon.';
+        }
+        this.set(next);
+      },
+      onCardHolder: e => this.set({ cardHolder: e.target.value, payError: '' }),
+      onCardExp: e => this.set({ cardExp: this.fmtExp(e.target.value), payError: '' }),
+      onCardCvv: e => this.set({ cardCvv: e.target.value.replace(/\D/g, '').slice(0, 4), payError: '' }),
+      onYappyPhone: e => this.set({ yappyPhone: this.fmtPhone(e.target.value), payError: '' }),
+      focusNumber: () => this.set({ focusField: 'number' }),
+      focusName: () => this.set({ focusField: 'name' }),
+      focusExp: () => this.set({ focusField: 'exp' }),
+      focusCvv: () => this.set({ focusField: 'cvv' }),
+      focusPhone: () => this.set({ focusField: 'phone' }),
+      blurField: () => this.set({ focusField: '' }),
+      payError: st.payError,
+      payErrorTitle: st.payErrorTitle,
+
+      // confirmation
+      confirmRows: [
+        { label: 'NIÑOS', value: this.kidNames() },
+        { label: 'FECHAS', value: this.datesLabel() },
+        { label: 'HORA DE LLEGADA', value: st.perDay ? 'Personalizada por día' : (st.time || '—') },
+        { label: 'TOTAL PAGADO', value: this.money(this.totalNum()) + ' · ' + (st.payMethod === 'yappy' ? 'Yappy · +507 ' + (st.yappyPhone || '0000-0000') : (st.payMethod === 'mastercard' ? 'Mastercard' : 'Visa') + ' ····' + (this.cardDigits().slice(-4) || '1111')) },
+        { label: 'REFERENCIA', value: st.ref },
+        { label: 'ADULTO RESPONSABLE', value: st.session ? st.session.name : (st.adult.nombre + ' ' + st.adult.apellido).trim() || '—' }
+      ],
+      qr: Array.from({ length: 121 }, (_, i) => {
+        const x = i % 11, y = Math.floor(i / 11);
+        const corner = (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
+        const on = corner ? !(x === 1 && y === 1) && !(x === 9 && y === 1) && !(x === 1 && y === 9) : ((x * 7 + y * 5 + x * y) % 3 === 0);
+        return on ? '#3A322B' : 'transparent';
+      }),
+
+      // events
+      eventTypes: EVENTS.map(([label, sub, dot], i) => {
+        const on = st.evType === i;
+        return {
+          label, sub, dot, initial: label.slice(0, 1), on,
+          bg: on ? '#EFE6D4' : '#FDFAF4',
+          border: on ? '#9C6240' : 'rgba(58,50,43,.12)',
+          onPick: () => this.set({ evType: i })
+        };
+      }),
+      flexOn: st.evFlex,
+      flexBg: st.evFlex ? '#EFE6D4' : '#FDFAF4',
+      flexBorder: st.evFlex ? '#9C6240' : 'rgba(58,50,43,.18)',
+      flexTrackBg: st.evFlex ? '#BAB25A' : '#C4B8A4',
+      flexKnobLeft: st.evFlex ? '19px' : '3px',
+      toggleFlex: () => this.setState(p => ({ evFlex: !p.evFlex, evDates: p.evFlex ? p.evDates.slice(0, 1) : p.evDates, evDateNote: '' })),
+      evDateRows: st.evDates.map((s, i) => ({
+        tag: i === 0 ? 'Fecha preferida' : 'Alternativa ' + i,
+        label: this.longDate(s),
+        onRemove: () => this.setState(p => ({ evDates: p.evDates.filter(x => x !== s), evDateNote: '' }))
+      })),
+      evDateNote: st.evDateNote,
+      guestFields: [
+        ['ADULTOS', 'evAdults'],
+        ['NIÑOS', 'evKids'],
+        ['INVITADOS (TOTAL)', 'evGuests']
+      ].map(([label, key]) => ({
+        label, value: st[key],
+        readOnly: key === 'evGuests',
+        bg: key === 'evGuests' ? '#F5ECDA' : '#FFFDF8',
+        border: st.evTouched && key === 'evGuests' && !(+st.evGuests > 0) ? '#9C6240' : 'rgba(58,50,43,.16)',
+        onChange: key === 'evGuests' ? () => {} : e => {
+          const v = e.target.value;
+          const other = key === 'evAdults' ? +st.evKids || 0 : +st.evAdults || 0;
+          const total = (+v || 0) + other;
+          this.set({ [key]: v, evGuests: total ? String(total) : '', evError: '' });
+        }
+      })),
+      evSlots: ['Mañana · 9 AM – 12 PM', 'Tarde · 1 PM – 4 PM', 'Noche · 5 PM – 8 PM'].map(label => {
+        const on = st.evSlot === label;
+        return Object.assign({ label, onPick: () => this.set({ evSlot: label, evError: '' }) }, chip(on));
+      }),
+      evNote: st.evNote,
+      onEvNote: e => this.set({ evNote: e.target.value }),
+      evNeedsContact: !st.session,
+      evContactFields: [['NOMBRE COMPLETO', 'evName', 'text', 'text'], ['TELÉFONO / WHATSAPP', 'evPhone', 'tel', 'tel'], ['EMAIL', 'evEmail', 'email', 'email']].map(([label, key, type, mode]) => ({
+        label, type, mode, value: st[key],
+        border: st.evTouched && !String(st[key]).trim() ? '#9C6240' : 'rgba(58,50,43,.16)',
+        onChange: e => { const v = e.target.value; this.set({ [key]: v, evError: '' }); }
+      })),
+      evError: st.evError,
+      evSummary: [
+        { label: 'TIPO DE EVENTO', value: st.evType !== null ? EVENTS[st.evType][0] : '—' },
+        { label: 'FECHA PREFERIDA', value: st.evDates.length ? this.longDate(st.evDates[0]) : '—' },
+        { label: 'ALTERNATIVAS', value: st.evDates.length > 1 ? st.evDates.slice(1).map(s => this.longDate(s)).join(' · ') : 'Sin alternativas' },
+        { label: 'INVITADOS', value: (st.evGuests || '—') + ' en total' + (st.evAdults || st.evKids ? ' (' + (st.evAdults || 0) + ' adultos, ' + (st.evKids || 0) + ' niños)' : '') },
+        { label: 'HORARIO', value: st.evSlot || '—' },
+        { label: 'ADD-ONS', value: (st.evAddons || []).length ? st.evAddons.join(' · ') : 'Sin add-ons' },
+        { label: 'CONTACTO', value: st.session ? (st.session.name + ' · ' + (st.session.phone || st.session.email)) : [st.evName, st.evPhone, st.evEmail].filter(Boolean).join(' · ') || '—' },
+        { label: 'NOTA', value: st.evNote || 'Sin nota' }
+      ],
+      evDoneRows: [
+        { label: 'EVENTO', value: st.evType !== null ? EVENTS[st.evType][0] : '—' },
+        { label: 'FECHA PREFERIDA', value: st.evDates.length ? this.longDate(st.evDates[0]) : '—' },
+        { label: 'INVITADOS', value: (st.evGuests || '—') + ' aprox.' },
+        { label: 'DEPÓSITO PAGADO', value: this.money(400) + ' · ' + (st.payMethod === 'yappy' ? 'Yappy · +507 ' + (st.yappyPhone || '0000-0000') : (st.payMethod === 'mastercard' ? 'Mastercard' : 'Visa') + ' ····' + (this.cardDigits().slice(-4) || '1111')) },
+        { label: 'REFERENCIA', value: 'EV-7T31' }
+      ],
+      evPhoneShown
+    };
+  }
+}
+</script>
+</body>
+</html>

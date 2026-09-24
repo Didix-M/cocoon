@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F5ECDA; }
+  a { color:#9C6240; text-decoration:none; }
+  a:hover { color:#3A322B; }
+  input:focus, button:focus { outline:2px solid #9CB4C7; outline-offset:2px; }
+  @media (max-width: 720px) {
+    [data-progress-label] { display:none !important; }
+    [data-two-col] { grid-template-columns:1fr !important; }
+    [data-sticky-cta] { position:fixed !important; left:0; right:0; bottom:0; padding:14px 16px calc(14px + env(safe-area-inset-bottom)); background:rgba(245,236,218,.96); backdrop-filter:blur(6px); border-top:1px solid rgba(58,50,43,.1); z-index:50; }
+    [data-flow-main] { padding-bottom:90px !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#F5ECDA;font-family:Quicksand,sans-serif;color:#3A322B">
+
+  <div style="position:sticky;top:0;z-index:40;background:rgba(245,236,218,.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(58,50,43,.08)">
+    <div style="max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(16px,4vw,32px)">
+      <a href="Membresias.dc.html" style="display:inline-flex;align-items:center" aria-label="Cocoon"><img src="uploads/cocoon-logo.png" alt="Cocoon" style="height:22px;width:auto;display:block"></a>
+      <div data-progress-label="" style="display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;letter-spacing:.06em">
+        <span style="color:{{ pFamiliaCol }}">FAMILIA</span>
+        <span style="color:rgba(58,50,43,.3)">→</span>
+        <span style="color:{{ pMiembroCol }}">MIEMBRO</span>
+        <span style="color:rgba(58,50,43,.3)">→</span>
+        <span style="color:{{ pPagoCol }}">PAGO</span>
+      </div>
+      <a href="Membresias.dc.html" style="font-size:13.5px;font-weight:600;color:#6D6D6D">Cerrar ✕</a>
+    </div>
+  </div>
+
+  <div data-flow-main="" style="max-width:640px;margin:0 auto;padding:clamp(32px,5vw,56px) clamp(16px,4vw,32px) 60px">
+
+    <!-- IDENTIFY -->
+    <sc-if value="{{ isIdentify }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div style="font-size:12.5px;font-weight:700;letter-spacing:.2em;color:#9C6240">FOUNDING MEMBERSHIP</div>
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(28px,4vw,38px);color:#9C6240">Continuemos con tu familia</h1>
+        <p style="margin:0;font-size:15.5px;line-height:1.55;color:#6D6D6D">Ingresa tu correo o teléfono para continuar.</p>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">CORREO O TELÉFONO
+          <input type="text" value="{{ identifyValue }}" onChange="{{ onIdentify }}" placeholder="denise@ejemplo.com" style="min-height:52px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:16px;color:#3A322B;box-sizing:border-box">
+        </label>
+        <button type="button" onClick="{{ submitIdentify }}" style="min-height:54px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Continuar</button>
+        <p style="margin:0;font-size:13px;color:#6D6D6D">Demo: <strong>denise@ejemplo.com</strong> es una familia ya registrada.</p>
+      </div>
+    </sc-if>
+
+    <!-- OTP -->
+    <sc-if value="{{ isOtp }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(26px,3.6vw,34px);color:#9C6240">¡Qué bueno verte de nuevo!</h1>
+        <p style="margin:0;font-size:15.5px;line-height:1.5;color:#6D6D6D">Enviamos un código de 6 dígitos a:<br><strong style="color:#3A322B">{{ identifyValue }}</strong></p>
+        <input type="text" inputmode="numeric" maxlength="6" value="{{ otp }}" onChange="{{ onOtp }}" placeholder="_ _ _ _ _ _" style="min-height:56px;padding:0 16px;border:1.5px solid {{ otpBorder }};border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:22px;letter-spacing:.5em;text-align:center;color:#3A322B;box-sizing:border-box">
+        <sc-if value="{{ otpError }}" hint-placeholder-val="{{ false }}">
+          <p role="alert" style="margin:0;font-size:14px;color:#9C6240">{{ otpError }}</p>
+        </sc-if>
+        <button type="button" onClick="{{ submitOtp }}" style="min-height:54px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Continuar</button>
+        <div style="display:flex;align-items:center;gap:18px">
+          <button type="button" onClick="{{ resendOtp }}" style="border:0;background:none;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#9C6240;cursor:pointer">Reenviar código</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- NEW FAMILY INTRO -->
+    <sc-if value="{{ isNewIntro }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px;text-align:center;align-items:center">
+        <div style="font-family:'EB Garamond',serif;font-size:clamp(26px,3.6vw,34px);color:#9C6240">Parece que es su primera vez en Cocoon 💛</div>
+        <p style="margin:0;max-width:44ch;font-size:15.5px;line-height:1.55;color:#6D6D6D">Creemos su familia Cocoon para activar la membresía.</p>
+        <button type="button" onClick="{{ startOnboarding }}" style="min-height:54px;padding:0 30px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Crear mi familia Cocoon</button>
+      </div>
+    </sc-if>
+
+    <!-- ONBOARDING -->
+    <sc-if value="{{ isOnboard }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(26px,3.6vw,34px);color:#9C6240">Creemos tu familia Cocoon</h1>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">ADULTO RESPONSABLE</div>
+          <div data-two-col="" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NOMBRE
+              <input type="text" value="{{ adult.nombre }}" onChange="{{ onAdultNombre }}" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">APELLIDO
+              <input type="text" value="{{ adult.apellido }}" onChange="{{ onAdultApellido }}" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">EMAIL
+            <input type="email" value="{{ adult.email }}" onChange="{{ onAdultEmail }}" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">TELÉFONO
+            <input type="tel" value="{{ adult.telefono }}" onChange="{{ onAdultTelefono }}" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+          </label>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">TU PEQUEÑO</div>
+          <sc-for list="{{ onboardKids }}" as="k" hint-placeholder-count="1">
+            <div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:#FFFDF8;border-radius:18px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div style="font-size:13px;font-weight:700;color:#3A322B">{{ k.title }}</div>
+                <button type="button" onClick="{{ k.remove }}" style="display:{{ k.removeDisplay }};border:0;background:none;font-size:12.5px;font-weight:600;color:#9C6240;cursor:pointer">Quitar</button>
+              </div>
+              <div data-two-col="" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <input type="text" placeholder="Nombre" value="{{ k.nombre }}" onChange="{{ k.onNombre }}" style="min-height:48px;padding:0 14px;border:1.5px solid rgba(58,50,43,.16);border-radius:12px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:14.5px;color:#3A322B;box-sizing:border-box">
+                <input type="text" placeholder="Apellido" value="{{ k.apellido }}" onChange="{{ k.onApellido }}" style="min-height:48px;padding:0 14px;border:1.5px solid rgba(58,50,43,.16);border-radius:12px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:14.5px;color:#3A322B;box-sizing:border-box">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:8px">
+                <select value="{{ k.dia }}" onChange="{{ k.onDia }}" style="min-height:48px;padding:0 8px;border:1.5px solid rgba(58,50,43,.16);border-radius:12px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:14px;color:#3A322B">
+                  <option value="">Día</option>
+                  <sc-for list="{{ k.dayOptions }}" as="d" hint-placeholder-count="31"><option value="{{ d }}">{{ d }}</option></sc-for>
+                </select>
+                <select value="{{ k.mes }}" onChange="{{ k.onMes }}" style="min-height:48px;padding:0 8px;border:1.5px solid rgba(58,50,43,.16);border-radius:12px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:14px;color:#3A322B">
+                  <option value="">Mes</option>
+                  <sc-for list="{{ k.monthOptions }}" as="m" hint-placeholder-count="12"><option value="{{ m }}">{{ m }}</option></sc-for>
+                </select>
+                <select value="{{ k.anio }}" onChange="{{ k.onAnio }}" style="min-height:48px;padding:0 8px;border:1.5px solid rgba(58,50,43,.16);border-radius:12px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:14px;color:#3A322B">
+                  <option value="">Año</option>
+                  <sc-for list="{{ k.yearOptions }}" as="y" hint-placeholder-count="20"><option value="{{ y }}">{{ y }}</option></sc-for>
+                </select>
+              </div>
+            </div>
+          </sc-for>
+          <button type="button" onClick="{{ addOnboardKid }}" style="align-self:flex-start;border:0;background:none;font-size:14px;font-weight:700;color:#9C6240;cursor:pointer">+ Agregar otro niño</button>
+        </div>
+
+        <sc-if value="{{ onboardError }}" hint-placeholder-val="{{ false }}">
+          <p role="alert" style="margin:0;font-size:14px;color:#9C6240">{{ onboardError }}</p>
+        </sc-if>
+        <button type="button" onClick="{{ submitOnboard }}" style="min-height:54px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Continuar</button>
+      </div>
+    </sc-if>
+
+    <!-- EMPTY KIDS -->
+    <sc-if value="{{ isEmptyKids }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px;text-align:center;align-items:center">
+        <div style="font-family:'EB Garamond',serif;font-size:clamp(24px,3.4vw,30px);color:#9C6240">Primero agreguemos a tu pequeño.</div>
+        <button type="button" onClick="{{ startOnboarding }}" style="min-height:52px;padding:0 28px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Agregar niño</button>
+      </div>
+    </sc-if>
+
+    <!-- SELECT CHILD -->
+    <sc-if value="{{ isSelectChild }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(26px,3.6vw,34px);color:#9C6240">¿Quién será miembro?</h1>
+        <p style="margin:0;font-size:15px;color:#6D6D6D">Puedes activar la membresía para uno o varios de tus pequeños.</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ selectableKids }}" as="k" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 18px;background:#FFFDF8;border-radius:18px;opacity:{{ k.opacity }}">
+              <div style="width:48px;height:48px;flex:none;border-radius:999px;background:#EDE4D2;display:flex;align-items:center;justify-content:center;font-family:'EB Garamond',serif;font-size:19px;color:#9C6240">{{ k.initial }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:16px;font-weight:600;color:#3A322B">{{ k.name }}</div>
+                <div style="font-size:13px;color:#6D6D6D">{{ k.age }}</div>
+              </div>
+              <sc-if value="{{ k.hasMembership }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:right">
+                  <div style="font-size:13px;font-weight:700;color:#3A322B">Founding Member</div>
+                  <div style="font-size:12px;color:#6D6D6D">Membresía activa</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ k.selectable }}" hint-placeholder-val="{{ true }}">
+                <button type="button" onClick="{{ k.toggle }}" style="min-height:44px;padding:0 20px;border-radius:999px;border:1.5px solid {{ k.btnBorder }};background:{{ k.btnBg }};font-family:Quicksand,sans-serif;font-size:14px;font-weight:700;color:{{ k.btnCol }};cursor:pointer">{{ k.btnLabel }}</button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <button type="button" onClick="{{ startOnboardingAddKid }}" style="align-self:flex-start;border:0;background:none;font-size:14px;font-weight:700;color:#9C6240;cursor:pointer">+ Agregar otro niño</button>
+
+        <sc-if value="{{ siblingDiscount }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(186,178,90,.18);border-radius:14px">
+            <span style="font-size:14px;font-weight:700;color:#3A322B">Beneficio por hermanos aplicado — 5% OFF en cada membresía</span>
+          </div>
+        </sc-if>
+
+        <div data-sticky-cta="">
+          <button type="button" onClick="{{ goReview }}" disabled="{{ noneSelected }}" style="width:100%;min-height:54px;border:0;border-radius:999px;background:{{ reviewBtnBg }};font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Continuar</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- REVIEW -->
+    <sc-if value="{{ isReview }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(26px,3.6vw,34px);color:#9C6240">Revisa tu membresía</h1>
+
+        <sc-for list="{{ reviewKids }}" as="k" hint-placeholder-count="1">
+          <div style="display:flex;flex-direction:column;gap:12px;padding:20px;background:#FFFDF8;border-radius:20px">
+            <div style="font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#9C6240">FOUNDING MEMBERSHIP</div>
+            <div style="font-family:'EB Garamond',serif;font-size:22px;color:#3A322B">{{ k.name }}</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;color:#3A322B"><span style="flex:none;width:6px;height:6px;margin-top:8px;border-radius:999px;background:#9C6240"></span>Play ilimitado</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;color:#3A322B"><span style="flex:none;width:6px;height:6px;margin-top:8px;border-radius:999px;background:#9C6240"></span>5% en Cocoon Café</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;color:#3A322B"><span style="flex:none;width:6px;height:6px;margin-top:8px;border-radius:999px;background:#9C6240"></span>Coffee Treat semanal</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;color:#3A322B"><span style="flex:none;width:6px;height:6px;margin-top:8px;border-radius:999px;background:#9C6240"></span>Beneficios de cumpleaños</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;color:#3A322B"><span style="flex:none;width:6px;height:6px;margin-top:8px;border-radius:999px;background:#9C6240"></span>Beneficios en eventos especiales</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;color:#3A322B"><span style="flex:none;width:6px;height:6px;margin-top:8px;border-radius:999px;background:#9C6240"></span>Birthday Gift</div>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ siblingDiscount }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(186,178,90,.18);border-radius:14px">
+            <span style="font-size:14px;font-weight:700;color:#3A322B">Beneficio por hermanos aplicado — 5% OFF en cada membresía</span>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:10px;padding:20px;background:#EDE4D2;border-radius:20px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;font-size:15px;color:#3A322B"><span>Precio mensual por niño</span><span style="font-weight:700">$XX</span></div>
+          <sc-if value="{{ siblingDiscount }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;font-size:15px;color:#3A322B"><span>Descuento por hermanos</span><span style="font-weight:700">-$XX</span></div>
+          </sc-if>
+          <div style="height:1px;background:rgba(58,50,43,.16)"></div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;font-size:18px;color:#3A322B"><span>Total mensual ({{ reviewCount }})</span><span style="font-weight:700">$XX</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;padding:20px;background:#FFFDF8;border-radius:20px">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">RENOVACIÓN MENSUAL AUTOMÁTICA</div>
+          <p style="margin:0;font-size:14px;line-height:1.55;color:#6D6D6D">Tu membresía se renovará automáticamente cada mes utilizando el método de pago registrado.</p>
+          <div style="display:flex;gap:24px;margin-top:4px">
+            <div><div style="font-size:12px;color:#6D6D6D">Inicia</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ startDate }}</div></div>
+            <div><div style="font-size:12px;color:#6D6D6D">Próximo cobro</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ nextBillingDate }}</div></div>
+          </div>
+        </div>
+
+        <label style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.5;color:#3A322B;cursor:pointer">
+          <input type="checkbox" checked="{{ termsAccepted }}" onChange="{{ toggleTerms }}" style="margin-top:2px;width:18px;height:18px;flex:none">
+          <span>He leído y acepto los <a href="Politicas.dc.html" style="font-weight:700">Términos y Condiciones de la membresía</a> y autorizo la renovación automática mensual.</span>
+        </label>
+
+        <div data-sticky-cta="">
+          <button type="button" onClick="{{ goPayment }}" disabled="{{ !termsAccepted }}" style="width:100%;min-height:54px;border:0;border-radius:999px;background:{{ payBtnBg }};font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">Continuar a pago</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- PAYMENT -->
+    <sc-if value="{{ isPayment }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(26px,3.6vw,34px);color:#9C6240">Método de pago</h1>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:#6D6D6D">Elige cómo quieres pagar. Lo que escribes se refleja al instante en tu tarjeta Cocoon.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+          <sc-for list="{{ payMethods }}" as="m" hint-placeholder-count="3">
+            <button type="button" onClick="{{ m.onPick }}" aria-pressed="{{ m.on }}" aria-label="{{ m.label }}" style="position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;min-height:96px;padding:14px 16px;border:1.5px solid {{ m.border }};border-radius:20px;background:{{ m.bg }};box-shadow:{{ m.shadow }};transition:transform .26s cubic-bezier(.2,.7,.2,1),box-shadow .26s ease,border-color .2s ease,background .3s ease;cursor:pointer;text-align:left">
+              <span aria-hidden="true" style="display:block;width:100%;height:{{ m.logoH }};background-image:url('{{ m.logo }}');background-size:contain;background-repeat:no-repeat;background-position:left center;opacity:{{ m.logoOpacity }}"></span>
+              <span style="position:relative;font-size:12.5px;line-height:1.35;color:{{ m.subColor }}">{{ m.sub }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ showCardPreview }}" hint-placeholder-val="{{ true }}">
+          <div style="perspective:1500px">
+            <div style="position:relative;width:100%;max-width:400px;aspect-ratio:1.62;transform-style:preserve-3d;transform:{{ flipTransform }};transition:transform .78s cubic-bezier(.2,.75,.2,1)">
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:26px;overflow:hidden;border:1px solid {{ cardEdge }};background:{{ cardBg }};box-shadow:0 24px 46px -30px rgba(58,50,43,.6);padding:clamp(16px,2.2vw,22px);display:flex;flex-direction:column;justify-content:space-between">
+                <span style="position:absolute;right:-38px;bottom:-50px;width:190px;height:190px;background-image:url('{{ cardShapeA }}');background-size:contain;background-repeat:no-repeat;opacity:.4;pointer-events:none"></span>
+                <span style="position:absolute;left:-24px;top:-26px;width:100px;height:100px;background-image:url('{{ cardShapeB }}');background-size:contain;background-repeat:no-repeat;opacity:.28;pointer-events:none"></span>
+                <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:14px">
+                  <span style="font-size:10.5px;font-weight:700;letter-spacing:.2em;color:{{ cardMuted }}">COCOON MEMBERSHIP</span>
+                </div>
+                <div style="position:relative;display:flex;flex-direction:column;gap:10px">
+                  <div style="align-self:flex-start;padding:7px 11px;margin-left:-11px;border-radius:13px;background:{{ zNumber }};transition:background .35s ease">
+                    <span style="display:block;font-size:clamp(15px,2vw,20px);font-weight:600;letter-spacing:.14em;color:{{ cardInk }};white-space:nowrap">{{ numberDisplay }}</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-end;gap:clamp(12px,2.6vw,26px)">
+                    <div style="min-width:0;flex:1 1 auto;padding:6px 11px;margin-left:-11px;border-radius:12px;background:{{ zName }};transition:background .35s ease">
+                      <span style="display:block;font-size:9.5px;font-weight:700;letter-spacing:.16em;color:{{ cardMuted }}">TITULAR</span>
+                      <span style="display:block;margin-top:3px;font-size:13.5px;font-weight:600;letter-spacing:.05em;color:{{ cardInk }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ holderDisplay }}</span>
+                    </div>
+                    <div style="flex:none;padding:6px 11px;border-radius:12px;background:{{ zExp }};transition:background .35s ease">
+                      <span style="display:block;font-size:9.5px;font-weight:700;letter-spacing:.16em;color:{{ cardMuted }}">VENCE</span>
+                      <span style="display:block;margin-top:3px;font-size:13.5px;font-weight:600;letter-spacing:.08em;color:{{ cardInk }}">{{ expDisplay }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);border-radius:26px;overflow:hidden;border:1px solid {{ cardEdge }};background:{{ cardBackBg }};display:flex;flex-direction:column">
+                <span style="position:absolute;left:-26px;bottom:-36px;width:150px;height:150px;background-image:url('{{ cardShapeB }}');background-size:contain;background-repeat:no-repeat;opacity:.3;pointer-events:none"></span>
+                <div style="height:40px;margin-top:22px;background:rgba(58,50,43,.82)"></div>
+                <div style="position:relative;padding:16px clamp(16px,2.2vw,22px);display:flex;align-items:center;gap:12px">
+                  <div style="flex:1 1 auto;height:36px;border-radius:8px;background:rgba(253,250,244,.75)"></div>
+                  <div style="flex:none;min-width:78px;height:36px;border-radius:9px;background:{{ zCvv }};border:1.5px solid {{ cvvEdge }};display:flex;align-items:center;justify-content:center">
+                    <span style="font-size:14px;font-weight:700;letter-spacing:.22em;color:{{ cardInk }}">{{ cvvDisplay }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showYappyPreview }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;overflow:hidden;width:100%;max-width:400px;padding:clamp(16px,2.2vw,22px);border-radius:26px;border:1px solid rgba(58,50,43,.12);background:linear-gradient(160deg,#FFFDF8 0%,#F5ECDA 100%)">
+            <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px">
+              <span style="font-size:10.5px;font-weight:700;letter-spacing:.2em;color:#6D6D6D">PAGO MÓVIL COCOON</span>
+              <img src="uploads/yappy-color-portrait.svg" alt="" aria-hidden="true" style="height:36px;width:auto;object-fit:contain">
+            </div>
+            <div style="position:relative;margin-top:18px;padding:14px 16px;border-radius:20px;background:{{ zPhone }};border:1.5px solid {{ phoneEdge }}">
+              <span style="display:block;font-size:9.5px;font-weight:700;letter-spacing:.16em;color:#6D6D6D">CELULAR YAPPY</span>
+              <span style="display:block;margin-top:4px;font-family:'EB Garamond',serif;font-size:clamp(20px,2.6vw,26px);letter-spacing:.04em;color:#3A322B">{{ yappyDisplay }}</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ cardForm }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NÚMERO DE TARJETA
+              <input type="text" inputmode="numeric" value="{{ cardNumber }}" onChange="{{ onCardNumber }}" onFocus="{{ focusNumber }}" onBlur="{{ blurField }}" placeholder="0000 0000 0000 0000" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NOMBRE DEL TITULAR
+              <input type="text" value="{{ cardHolder }}" onChange="{{ onCardHolder }}" onFocus="{{ focusName }}" onBlur="{{ blurField }}" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+            </label>
+            <div data-two-col="" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">VENCE
+                <input type="text" inputmode="numeric" value="{{ cardExp }}" onChange="{{ onCardExp }}" onFocus="{{ focusExp }}" onBlur="{{ blurField }}" placeholder="MM/AA" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">CVV
+                <input type="text" inputmode="numeric" maxlength="4" value="{{ cardCvv }}" onChange="{{ onCardCvv }}" onFocus="{{ focusCvv }}" onBlur="{{ blurField }}" placeholder="000" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+              </label>
+            </div>
+            <sc-if value="{{ brandNote }}" hint-placeholder-val="{{ false }}">
+              <p role="status" style="margin:2px 0 0;font-size:14px;line-height:1.5;color:#5E6B22">{{ brandNote }}</p>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ yappyForm }}" hint-placeholder-val="{{ false }}">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">NÚMERO DE CELULAR ASOCIADO A YAPPY
+            <input type="tel" value="{{ yappyPhone }}" onChange="{{ onYappyPhone }}" onFocus="{{ focusPhone }}" onBlur="{{ blurField }}" placeholder="6000-0000" style="min-height:50px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FFFDF8;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;box-sizing:border-box">
+          </label>
+        </sc-if>
+
+        <p style="margin:0;display:flex;align-items:center;gap:10px;font-size:13px;color:#6D6D6D">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#BAB25A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Pago protegido. Cocoon no almacena los datos de tu tarjeta.
+        </p>
+
+        <sc-if value="{{ payError }}" hint-placeholder-val="{{ false }}">
+          <p role="alert" style="margin:0;font-size:14px;color:#9C6240">{{ payError }}</p>
+        </sc-if>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;padding:14px 16px;background:#EDE4D2;border-radius:14px;font-size:15px;color:#3A322B">
+          <span>Total mensual hoy</span><span style="font-weight:700">$XX</span>
+        </div>
+
+        <div data-sticky-cta="">
+          <button type="button" onClick="{{ submitPayment }}" style="width:100%;min-height:54px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer">{{ payBtnLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- SUCCESS -->
+    <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+        <div style="font-family:'EB Garamond',serif;font-size:clamp(28px,4vw,38px);color:#9C6240">Welcome to Cocoon Club 💛</div>
+        <p style="margin:0;font-size:17px;color:#3A322B">{{ successHeadline }}</p>
+        <div style="width:100%;display:flex;flex-direction:column;gap:14px;padding:20px;background:#FFFDF8;border-radius:20px;text-align:left">
+          <sc-for list="{{ successKids }}" as="k" hint-placeholder-count="1">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid rgba(58,50,43,.1)">
+              <div>
+                <div style="font-size:15.5px;font-weight:600;color:#3A322B">{{ k.name }}</div>
+                <div style="font-size:12.5px;color:#6D6D6D">Founding Membership · Activa</div>
+              </div>
+              <div style="font-size:12.5px;color:#6D6D6D;text-align:right">Próxima renovación<br>{{ k.next }}</div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ siblingDiscount }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13.5px;font-weight:600;color:#3A322B">Beneficio por hermanos aplicado · 5% OFF</div>
+          </sc-if>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;font-size:15px;color:#3A322B"><span>Cargo mensual</span><span style="font-weight:700">$XX</span></div>
+          <div style="font-size:13px;color:#6D6D6D">Pago confirmado con {{ payMethodLabel }}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:6px">
+          <a href="./Mi Cocoon.dc.html" style="display:inline-flex;align-items:center;height:52px;padding:0 28px;border-radius:999px;background:#9C6240;font-size:15.5px;font-weight:700;color:#FDFAF4">Ver mi membresía</a>
+          <a href="./Reservar.dc.html?flow=day" style="display:inline-flex;align-items:center;height:52px;padding:0 28px;border-radius:999px;border:1px solid rgba(58,50,43,.28);font-size:15.5px;font-weight:600;color:#3A322B">Reservar una visita</a>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+const MONTHLY_PRICE_PLACEHOLDER = null; // final price not approved yet — UI shows $XX until backend/CMS supplies a real value
+const SIBLING_DISCOUNT_PCT = 5;
+
+class Component extends DCLogic {
+  state = {
+    step: 'identify', identifyValue: '', otp: '', otpError: '', otpTries: 0,
+    adult: { nombre: '', apellido: '', email: '', telefono: '' },
+    onboardKids: [{ nombre: '', apellido: '', nacimiento: '' }],
+    onboardError: '',
+    selected: {}, termsAccepted: false,
+    payMethod: 'visa', cardNumber: '', cardHolder: '', cardExp: '', cardCvv: '', yappyPhone: '',
+    focusField: '', brandNote: '', payError: '', paying: false
+  };
+
+  fmtCard(v) { const d = String(v).replace(/\D/g, '').slice(0, 16); return d.replace(/(.{4})/g, '$1 ').trim(); }
+  fmtExp(v) { const d = String(v).replace(/\D/g, '').slice(0, 4); return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d; }
+  fmtPhone(v) { const d = String(v).replace(/\D/g, '').slice(0, 8); return d.length > 4 ? d.slice(0, 4) + '-' + d.slice(4) : d; }
+  cardDigits() { return this.state.cardNumber.replace(/\D/g, ''); }
+  brandFor(digits) {
+    if (!digits) return null;
+    if (digits[0] === '4') return 'visa';
+    if (digits[0] === '5' || digits[0] === '2') return 'mastercard';
+    return null;
+  }
+  maskedNumber() {
+    const d = this.cardDigits();
+    const out = [];
+    for (let g = 0; g < 4; g++) {
+      const chunk = d.slice(g * 4, g * 4 + 4);
+      out.push(chunk ? chunk.padEnd(4, '•').split('').join('') : '••••');
+    }
+    return out.join('  ');
+  }
+
+  loadSession() { try { const r = localStorage.getItem('cocoon_session'); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  saveSession(s) { try { localStorage.setItem('cocoon_session', JSON.stringify(s)); } catch (e) {} }
+  loadMemberships() { try { const r = localStorage.getItem('cocoon_memberships'); return r ? JSON.parse(r) : {}; } catch (e) { return {}; } }
+  saveMemberships(m) { try { localStorage.setItem('cocoon_memberships', JSON.stringify(m)); } catch (e) {} }
+
+  componentDidMount() {
+    const s = this.loadSession();
+    if (s) {
+      this.setState({ step: (s.kids || []).length ? 'selectChild' : 'emptyKids' });
+    }
+  }
+
+  onIdentifyChange(v) { this.setState({ identifyValue: v }); }
+  submitIdentify() {
+    const v = this.state.identifyValue.trim().toLowerCase();
+    if (!v) return;
+    if (v === 'denise@ejemplo.com') { this.setState({ step: 'otp', otpError: '' }); }
+    else { this.setState({ step: 'newIntro' }); }
+  }
+  submitOtp() {
+    if (this.state.otp.length !== 6) { this.setState({ otpError: 'Ingresa el código de 6 dígitos.' }); return; }
+    const DEMO_FAMILY = { name: 'Denise Rodríguez', email: 'denise@ejemplo.com', phone: '+507 6000-0000',
+      kids: [
+        { name: 'Charlie', birth: '12 mayo 2022', age: '4 años' },
+        { name: 'Tobías', birth: '3 marzo 2024', age: '2 años' }
+      ] };
+    this.saveSession(DEMO_FAMILY);
+    this.setState({ step: (DEMO_FAMILY.kids || []).length ? 'selectChild' : 'emptyKids', otp: '' });
+  }
+  resendOtp() { this.setState({ otp: '', otpError: '' }); }
+
+  startOnboarding() { this.setState({ step: 'onboard', adult: { ...this.state.adult, email: this.state.identifyValue } }); }
+  startOnboardingAddKid() { this.setState({ step: 'onboard', onboardKids: [{ nombre: '', apellido: '', nacimiento: '' }], onboardMode: 'addKid' }); }
+
+  updateAdult(field, v) { this.setState(s => ({ adult: { ...s.adult, [field]: v } })); }
+  addOnboardKid() { this.setState(s => ({ onboardKids: [...s.onboardKids, { nombre: '', apellido: '', nacimiento: '' }] })); }
+  removeOnboardKid(i) { this.setState(s => ({ onboardKids: s.onboardKids.filter((_, j) => j !== i) })); }
+  updateOnboardKidPart(i, part, v) {
+    this.setState(s => ({
+      onboardKids: s.onboardKids.map((k, j) => j === i ? { ...k, [part]: v } : k)
+    }));
+  }
+  updateOnboardKidField(i, field, v) {
+    this.setState(s => ({ onboardKids: s.onboardKids.map((k, j) => j === i ? { ...k, [field]: v } : k) }));
+  }
+
+  submitOnboard() {
+    const st = this.state;
+    if (st.onboardMode !== 'addKid') {
+      const a = st.adult;
+      if (!a.nombre.trim() || !a.apellido.trim() || !a.telefono.trim() || !/.+@.+\..+/.test(a.email)) {
+        this.setState({ onboardError: 'Revisa los datos del adulto responsable. El email debe ser válido.' }); return;
+      }
+    }
+    const validKids = st.onboardKids.filter(k => k.nombre.trim());
+    if (!validKids.length) { this.setState({ onboardError: 'Agrega al menos un niño con su nombre.' }); return; }
+
+    let session = this.loadSession();
+    const newKids = validKids.map(k => ({ name: k.nombre.trim() + (k.apellido.trim() ? ' ' + k.apellido.trim() : ''), birth: (k.dia && k.mes && k.anio) ? (k.anio + '-' + k.mes + '-' + k.dia) : '', age: '' }));
+    if (session) {
+      session = { ...session, kids: [...(session.kids || []), ...newKids] };
+    } else {
+      session = { name: st.adult.nombre.trim() + ' ' + st.adult.apellido.trim(), email: st.adult.email.trim(), phone: st.adult.telefono.trim(), kids: newKids };
+    }
+    this.saveSession(session);
+    this.setState({ step: 'selectChild', onboardError: '' });
+  }
+
+  toggleKid(name) { this.setState(s => ({ selected: { ...s.selected, [name]: !s.selected[name] } })); }
+  goReview() { if (Object.values(this.state.selected).some(Boolean)) this.setState({ step: 'review' }); }
+  goPayment() { if (this.state.termsAccepted) this.setState({ step: 'payment' }); }
+  toggleTerms() { this.setState(s => ({ termsAccepted: !s.termsAccepted })); }
+
+  selectPayMethod(k) { this.setState({ payMethod: k, payError: '' }); }
+  submitPayment() {
+    const st = this.state;
+    if (st.payMethod === 'yappy') {
+      if (st.yappyPhone.replace(/\D/g, '').length < 7) { this.setState({ payError: 'Escribe el celular asociado a tu cuenta Yappy.' }); return; }
+    } else {
+      if (st.cardNumber.replace(/\D/g, '').length < 16) { this.setState({ payError: 'El número de tarjeta debe tener 16 dígitos.' }); return; }
+      if (!st.cardHolder.trim()) { this.setState({ payError: 'Escribe el nombre del titular.' }); return; }
+      if (st.cardExp.replace(/\D/g, '').length < 4) { this.setState({ payError: 'La fecha de vencimiento va en formato MM/AA.' }); return; }
+      if (st.cardCvv.replace(/\D/g, '').length < 3) { this.setState({ payError: 'El CVV son 3 o 4 dígitos.' }); return; }
+      if (st.cardNumber.replace(/\D/g, '').slice(0, 4) === '4000') {
+        this.setState({ paying: true, payError: '' });
+        setTimeout(() => this.setState({ paying: false, payError: 'Tu banco rechazó el pago. No se hizo ningún cargo — intenta con otra tarjeta o con Yappy.' }), 900);
+        return;
+      }
+    }
+    this.setState({ paying: true, payError: '' });
+    const session = this.loadSession();
+    const selectedNames = Object.keys(this.state.selected).filter(n => this.state.selected[n]);
+    const today = new Date();
+    const next = new Date(today); next.setMonth(next.getMonth() + 1);
+    const fmt = d => d.toLocaleDateString('es-PA', { day: 'numeric', month: 'long' });
+    const memberships = this.loadMemberships();
+    selectedNames.forEach(name => { memberships[name] = { status: 'active', start: fmt(today), next: fmt(next) }; });
+    setTimeout(() => {
+      this.saveMemberships(memberships);
+      this.setState({ paying: false, step: 'success' });
+    }, 700);
+  }
+
+  renderVals() {
+    const st = this.state;
+    const session = this.loadSession();
+    const memberships = this.loadMemberships();
+    const kids = (session && session.kids) || [];
+
+    const selectableKids = kids.map(k => {
+      const has = !!memberships[k.name];
+      const isSel = !!st.selected[k.name];
+      return {
+        name: k.name, initial: k.name[0], age: k.age || '',
+        hasMembership: has, selectable: !has,
+        opacity: has ? '.65' : '1',
+        toggle: () => this.toggleKid(k.name),
+        btnLabel: isSel ? 'Seleccionado' : 'Seleccionar',
+        btnBg: isSel ? '#9C6240' : 'transparent',
+        btnCol: isSel ? '#FDFAF4' : '#9C6240',
+        btnBorder: isSel ? '#9C6240' : 'rgba(156,98,64,.4)'
+      };
+    });
+    const selectedCount = Object.values(st.selected).filter(Boolean).length;
+    const siblingDiscount = selectedCount >= 2;
+
+    const dayOptions = Array.from({ length: 31 }, (_, n) => String(n + 1).padStart(2, '0'));
+    const monthOptions = Array.from({ length: 12 }, (_, n) => String(n + 1).padStart(2, '0'));
+    const yearOptions = Array.from({ length: 20 }, (_, n) => String(2026 - n));
+
+    const stepOrder = { identify: 1, otp: 1, newIntro: 1, onboard: 1, emptyKids: 1, selectChild: 2, review: 2, payment: 3, success: 3 };
+    const cur = stepOrder[st.step] || 1;
+    const col = n => cur === n ? '#9C6240' : (cur > n ? '#BAB25A' : 'rgba(58,50,43,.35)');
+
+    const reviewKids = kids.filter(k => st.selected[k.name]).map(k => ({ name: k.name }));
+    const today = new Date();
+    const next = new Date(today); next.setMonth(next.getMonth() + 1);
+    const fmt = d => d.toLocaleDateString('es-PA', { day: 'numeric', month: 'long' });
+
+    const payMethods = [
+      { key: 'visa', label: 'Visa', sub: 'Débito o crédito', logo: 'uploads/Visa_Inc.-Logo.wine.svg', logoH: '22px' },
+      { key: 'mastercard', label: 'Mastercard', sub: 'Débito o crédito', logo: 'uploads/Mastercard-Logo.wine.svg', logoH: '26px' },
+      { key: 'yappy', label: 'Yappy', sub: 'Pago desde tu banco', logo: 'uploads/yappy-color-portrait.svg', logoH: '30px' }
+    ].map(m => {
+      const on = st.payMethod === m.key;
+      return { ...m, on, onPick: () => this.selectPayMethod(m.key),
+        border: on ? '#9C6240' : 'rgba(58,50,43,.14)', bg: on ? 'rgba(156,98,64,.08)' : '#FFFDF8',
+        shadow: on ? '0 10px 22px -14px rgba(58,50,43,.4)' : 'none',
+        logoOpacity: on ? '1' : '.6', subColor: on ? '#3A322B' : '#6D6D6D' };
+    });
+
+    const successKids = kids.filter(k => st.selected[k.name]).map(k => ({ name: k.name, next: (memberships[k.name] && memberships[k.name].next) || fmt(next) }));
+    const successHeadline = successKids.length > 1 ? successKids.map(k => k.name).join(' y ') + ' ya son Founding Members' : (successKids[0] ? successKids[0].name + ' ya es Founding Member' : '');
+
+    return {
+      isIdentify: st.step === 'identify',
+      isOtp: st.step === 'otp',
+      isNewIntro: st.step === 'newIntro',
+      isOnboard: st.step === 'onboard',
+      isEmptyKids: st.step === 'emptyKids',
+      isSelectChild: st.step === 'selectChild',
+      isReview: st.step === 'review',
+      isPayment: st.step === 'payment',
+      isSuccess: st.step === 'success',
+
+      pFamiliaCol: col(1), pMiembroCol: col(2), pPagoCol: col(3),
+
+      identifyValue: st.identifyValue,
+      onIdentify: e => this.onIdentifyChange(e.target.value),
+      submitIdentify: () => this.submitIdentify(),
+
+      otp: st.otp, onOtp: e => this.setState({ otp: e.target.value.replace(/\D/g, '').slice(0, 6) }),
+      otpBorder: st.otpError ? '#9C6240' : 'rgba(58,50,43,.16)', otpError: st.otpError,
+      submitOtp: () => this.submitOtp(), resendOtp: () => this.resendOtp(),
+
+      startOnboarding: () => this.startOnboarding(),
+      startOnboardingAddKid: () => this.startOnboardingAddKid(),
+
+      adult: st.adult,
+      onAdultNombre: e => this.updateAdult('nombre', e.target.value),
+      onAdultApellido: e => this.updateAdult('apellido', e.target.value),
+      onAdultEmail: e => this.updateAdult('email', e.target.value),
+      onAdultTelefono: e => this.updateAdult('telefono', e.target.value),
+      onboardKids: st.onboardKids.map((k, i) => {
+        return {
+          title: 'Niño ' + (i + 1), nombre: k.nombre, apellido: k.apellido,
+          dia: k.dia || '', mes: k.mes || '', anio: k.anio || '',
+          dayOptions, monthOptions, yearOptions,
+          removeDisplay: st.onboardKids.length > 1 ? 'inline-flex' : 'none',
+          remove: () => this.removeOnboardKid(i),
+          onNombre: e => this.updateOnboardKidField(i, 'nombre', e.target.value),
+          onApellido: e => this.updateOnboardKidField(i, 'apellido', e.target.value),
+          onDia: e => this.updateOnboardKidPart(i, 'dia', e.target.value),
+          onMes: e => this.updateOnboardKidPart(i, 'mes', e.target.value),
+          onAnio: e => this.updateOnboardKidPart(i, 'anio', e.target.value)
+        };
+      }),
+      addOnboardKid: () => this.addOnboardKid(),
+      onboardError: st.onboardError,
+      submitOnboard: () => this.submitOnboard(),
+
+      selectableKids, siblingDiscount, noneSelected: selectedCount === 0,
+      reviewBtnBg: selectedCount === 0 ? 'rgba(156,98,64,.4)' : '#9C6240',
+      goReview: () => this.goReview(),
+
+      reviewKids, reviewCount: reviewKids.length + (reviewKids.length === 1 ? ' niño' : ' niños'),
+      startDate: fmt(today), nextBillingDate: fmt(next),
+      termsAccepted: st.termsAccepted, toggleTerms: () => this.toggleTerms(),
+      payBtnBg: st.termsAccepted ? '#9C6240' : 'rgba(156,98,64,.4)',
+      goPayment: () => this.goPayment(),
+
+      payMethods,
+      cardForm: st.payMethod !== 'yappy', yappyForm: st.payMethod === 'yappy',
+      showCardPreview: st.payMethod !== 'yappy', showYappyPreview: st.payMethod === 'yappy',
+      flipTransform: st.focusField === 'cvv' ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      cardBg: st.payMethod === 'mastercard' ? 'linear-gradient(155deg,#DCE6EC 0%,#A9BECD 100%)' : 'linear-gradient(155deg,#FFFDF8 0%,#EFE6D4 100%)',
+      cardBackBg: st.payMethod === 'mastercard' ? 'linear-gradient(155deg,#C3D2DC 0%,#9CB4C7 100%)' : 'linear-gradient(155deg,#F5ECDA 0%,#E2D6BF 100%)',
+      cardEdge: st.payMethod === 'mastercard' ? 'rgba(46,58,67,.22)' : 'rgba(58,50,43,.14)',
+      cardInk: st.payMethod === 'mastercard' ? '#25333C' : '#3A322B',
+      cardMuted: st.payMethod === 'mastercard' ? 'rgba(37,51,60,.62)' : '#8A7B66',
+      cardShapeA: st.payMethod === 'mastercard' ? 'uploads/IMG_6817.PNG' : 'uploads/IMG_6822.PNG',
+      cardShapeB: st.payMethod === 'mastercard' ? 'uploads/IMG_6820.PNG' : 'uploads/IMG_6819.PNG',
+      zNumber: st.focusField === 'number' ? 'rgba(156,98,64,.16)' : 'transparent',
+      zName: st.focusField === 'name' ? 'rgba(156,98,64,.16)' : 'transparent',
+      zExp: st.focusField === 'exp' ? 'rgba(156,98,64,.16)' : 'transparent',
+      zCvv: st.focusField === 'cvv' ? 'rgba(156,98,64,.2)' : 'rgba(253,250,244,.75)',
+      cvvEdge: st.focusField === 'cvv' ? '#9C6240' : 'rgba(58,50,43,.14)',
+      zPhone: st.focusField === 'phone' ? 'rgba(156,98,64,.14)' : '#FFFDF8',
+      phoneEdge: st.focusField === 'phone' ? '#9C6240' : 'rgba(58,50,43,.12)',
+      numberDisplay: this.maskedNumber(),
+      holderDisplay: st.cardHolder.trim() ? st.cardHolder.trim().toUpperCase() : 'NOMBRE DEL TITULAR',
+      expDisplay: st.cardExp || 'MM/AA',
+      cvvDisplay: st.cardCvv || '•••',
+      yappyDisplay: st.yappyPhone || '6000-0000',
+      brandNote: st.brandNote,
+      cardNumber: st.cardNumber,
+      onCardNumber: e => {
+        const formatted = this.fmtCard(e.target.value);
+        const brand = this.brandFor(formatted.replace(/\D/g, ''));
+        const next = { cardNumber: formatted, payError: '' };
+        if (brand && brand !== this.state.payMethod) { next.payMethod = brand; next.brandNote = 'Detectamos que es ' + (brand === 'visa' ? 'Visa' : 'Mastercard') + ' y actualizamos el método.'; }
+        else { next.brandNote = ''; }
+        this.setState(next);
+      },
+      cardHolder: st.cardHolder, onCardHolder: e => this.setState({ cardHolder: e.target.value }),
+      cardExp: st.cardExp, onCardExp: e => this.setState({ cardExp: this.fmtExp(e.target.value) }),
+      cardCvv: st.cardCvv, onCardCvv: e => this.setState({ cardCvv: e.target.value.replace(/\D/g, '').slice(0, 4) }),
+      yappyPhone: st.yappyPhone, onYappyPhone: e => this.setState({ yappyPhone: this.fmtPhone(e.target.value) }),
+      focusNumber: () => this.setState({ focusField: 'number' }),
+      focusName: () => this.setState({ focusField: 'name' }),
+      focusExp: () => this.setState({ focusField: 'exp' }),
+      focusCvv: () => this.setState({ focusField: 'cvv' }),
+      focusPhone: () => this.setState({ focusField: 'phone' }),
+      blurField: () => this.setState({ focusField: '' }),
+      payError: st.payError,
+      payBtnLabel: st.paying ? 'Activando…' : 'Activar membresía',
+      submitPayment: () => this.submitPayment(),
+
+      successHeadline, successKids,
+      payMethodLabel: st.payMethod === 'yappy' ? 'Yappy' : (st.payMethod === 'mastercard' ? 'Mastercard' : 'Visa')
+    };
+  }
+}
+
+</script>
+</body>
+</html>

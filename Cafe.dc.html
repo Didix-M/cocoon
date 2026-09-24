@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc><helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F5ECDA; }
+  a { color:#9C6240; text-decoration:none; }
+  a:hover { color:#3A322B; }
+  [data-navlinks]::-webkit-scrollbar { display: none; height: 0; }
+  @media (max-width: 700px) { [data-login-label] { display: none; } }
+  @media (max-width: 1024px) { [data-pillars] { grid-template-columns: repeat(2, minmax(0,1fr)) !important; } }
+  @media (max-width: 1024px) {
+    [data-shape]:not([data-shape-sm]) { display: none !important; }
+  }
+  @media (max-width: 430px) { [data-pillars] { grid-template-columns: minmax(0,1fr) !important; } }
+  /* ---------- responsive system ---------- */
+  @media (max-width: 1100px) {
+    [data-journey] { display: none; }
+    [data-journey-sm] { display: block; }
+  }
+  @media (min-width: 1101px) { [data-journey-sm] { display: none; } }
+
+  [data-gallery]::-webkit-scrollbar { display: none; }
+  [data-collage] > * { min-width: 0; min-height: 0; }
+  @media (max-width: 900px) { [data-philosophy] { grid-template-columns: minmax(0,1fr) !important; } }
+  @media (min-width: 901px) and (max-width: 1100px) { [data-philosophy] { grid-template-columns: repeat(2,minmax(0,1fr)) !important; } }
+  @media (max-width: 1100px) {
+    #visitas { grid-template-columns: minmax(0,1fr) !important; }
+    [data-plan] { display: grid !important; grid-template-columns: 1fr auto; gap: 6px 16px !important; align-items: baseline; }
+    [data-plan-name] { grid-column: 1; grid-row: 1; min-width: 0 !important; }
+    [data-plan-price] { grid-column: 2; grid-row: 1; }
+    [data-plan-desc] { grid-column: 1 / -1; grid-row: 2; }
+    [data-plan-cta] { grid-column: 1 / -1; grid-row: 3; justify-self: start; margin-top: 10px; min-height: 46px; display: inline-flex; align-items: center; }
+  }
+  @media (max-width: 900px) {
+    [data-nav-wrapper] { top: 12px !important; left: 12px !important; right: 12px !important; }
+    [data-nav-wrapper] nav { height: 58px !important; padding: 6px 6px 6px 16px !important; gap: 10px !important; }
+    [data-nav-burger] { display: flex !important; }
+    [data-nav-cta] { display: none !important; }
+    #cocoon-dropdown { grid-template-columns: 1fr !important; padding: 16px !important; }
+    [data-dd-image] { display: none !important; }
+
+    [data-hero] { height: auto !important; min-height: 0 !important; background: #F5ECDA !important; display: flex; flex-direction: column; gap: 22px; padding: 104px 20px 56px; box-sizing: border-box; }
+    [data-hero-media] { position: static !important; order: 2; width: 100%; aspect-ratio: 4/5; border-radius: 120px 120px 20px 20px; background: #EDE4D2; padding: 18px !important; align-items: flex-end !important; box-sizing: border-box; }
+    [data-hero-tint] { display: none !important; }
+    [data-hero-content] { position: static !important; order: 1; padding: 0 !important; gap: 14px !important; }
+    [data-hero-content] h1 { color: #9C6240 !important; font-size: clamp(38px, 11vw, 48px) !important; max-width: 13ch !important; }
+    [data-hero-content] p { color: #6D6D6D !important; font-size: 16px !important; }
+    [data-hero-content] a { color: #3A322B !important; border-color: rgba(58,50,43,.35) !important; height: 50px !important; }
+
+    [data-plan] { display: grid !important; grid-template-columns: 1fr auto; gap: 6px 16px !important; align-items: baseline; }
+    [data-plan-name] { grid-column: 1; grid-row: 1; min-width: 0 !important; }
+    [data-plan-price] { grid-column: 2; grid-row: 1; }
+    [data-plan-desc] { grid-column: 1 / -1; grid-row: 2; }
+    [data-plan-cta] { grid-column: 1 / -1; grid-row: 3; justify-self: start; margin-top: 10px; min-height: 46px; display: inline-flex; align-items: center; }
+
+    [data-pillars] svg { width: 38px !important; height: 38px !important; }
+    [data-pillars] { gap: 34px 24px !important; }
+  }
+  @media (max-width: 1024px) {
+    [data-shape]:not([data-shape-sm]) { display: none !important; }
+  }
+  @media (max-width: 430px) {
+    [data-nav-wrapper] nav { padding-left: 14px !important; }
+    [data-hero] { padding: 100px 16px 48px; }
+    [data-hero-media] { aspect-ratio: 3/4; }
+  }
+  @keyframes ddIn { from { opacity:0; transform: translateX(-50%) translateY(-8px) scale(.97); } to { opacity:1; transform: translateX(-50%) translateY(0) scale(1); } }
+  @keyframes swapA { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform:none; } }
+  @keyframes swapB { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform:none; } }
+  @media (max-width: 900px) {
+    [data-navlinks] { display: none !important; }
+    [data-nav-wrapper] { left: 16px !important; right: 16px !important; transform: none !important; width: auto !important; max-width: none !important; }
+    [data-nav-wrapper] nav { justify-content: space-between; }
+  }
+  @keyframes floatA { 0%,100% { transform: translateY(-5px) rotate(-1.2deg); } 50% { transform: translateY(5px) rotate(1.2deg); } }
+  @keyframes floatB { 0%,100% { transform: translateY(4px) rotate(1deg); } 50% { transform: translateY(-4px) rotate(-1deg); } }
+  [data-shape] { z-index: 0; }
+  [data-float] { animation: floatA 15s ease-in-out infinite; }
+  [data-float="b"] { animation: floatB 19s ease-in-out infinite; }
+  @media (max-width: 1100px) { [data-journey] { display: none; } }
+  @media (max-width: 820px) { [data-shape-lg] { display: none; } }
+  @keyframes archOpen { from { clip-path: inset(50% 0 50% 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes riseIn { from { opacity:0; transform: translateY(26px); } to { opacity:1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; clip-path: none !important; opacity:1 !important; transform:none !important; }
+  }
+</style>
+<style>
+  [data-cafe-chips]::-webkit-scrollbar { display: none; }
+  [data-grid] { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: clamp(16px,1.8vw,26px); }
+  @media (min-width: 1500px) { [data-grid] { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+  @media (max-width: 1100px) {
+    [data-cafe-shell] { grid-template-columns: minmax(0,1fr) !important; }
+    [data-sidebar] { display: none !important; }
+    [data-filter-toggle] { display: inline-flex !important; flex: 1; justify-content: center; }
+    [data-count-wrap] > div { display: none !important; }
+    [data-count-wrap] { flex: 1; }
+    [data-sort-label] { flex: 1; justify-content: flex-end; }
+    [data-sort-label] select { flex: 1; max-width: 190px; }
+    [data-grid] { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 560px) { [data-grid] { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; } }
+  @media (max-width: 380px) { [data-grid] { grid-template-columns: minmax(0,1fr); } }
+  @media (max-width: 900px) { [data-cart-desktop] { display: none !important; } [data-cart-mobile] { display: flex !important; } }
+  @keyframes sheetIn { from { opacity:0; transform: translateY(14px) scale(.985); } to { opacity:1; transform:none; } }
+  [data-detail-sheet], [data-cart-panel], [data-filter-sheet] { opacity: 1; }
+  @keyframes cartIn { from { transform: translateX(100%); } to { transform: none; } }
+  @media (max-width: 520px) {
+    [data-cart-panel] { width: 100% !important; height: 88% !important; margin-top: auto; border-radius: 28px 28px 0 0; animation: sheetIn 340ms cubic-bezier(.2,.7,.2,1) 1 forwards !important; }
+  }
+  @media (max-width: 760px) {
+    [data-detail-sheet] { max-height: 92svh !important; grid-template-columns: minmax(0,1fr) !important; border-radius: 26px !important; }
+    [data-detail-photo] { min-height: 0 !important; aspect-ratio: 16/9 !important; }
+    [data-detail-body] { padding: 16px 18px 18px !important; gap: 10px !important; }
+    [data-detail-body] p { font-size: 14px !important; line-height: 1.45 !important; }
+    [data-detail-title] { font-size: 24px !important; }
+    [data-addon-list] { gap: 6px !important; }
+    [data-addon-list] button { padding: 8px 12px !important; font-size: 14px !important; border-radius: 11px !important; }
+    [data-detail-note] input { padding: 9px 12px !important; font-size: 14px !important; }
+    [data-detail-actions] { margin-top: 2px !important; }
+    [data-detail-actions] button[type="button"] { height: 46px !important; }
+  }
+  @media (max-width: 760px) and (max-height: 720px) {
+    [data-detail-photo] { display: none !important; }
+  }
+</style>
+<script src="./scroll-pro.js"></script>
+</helmet>
+
+<div style="position:relative;width:100%;background:#F5ECDA;font-family:Quicksand,sans-serif;overflow-x:hidden">
+  <div style="position:relative;z-index:2">
+
+  <div data-nav-wrapper="" style="position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:1000;width:max-content;max-width:calc(100vw - 32px)">
+    <nav style="position:relative;box-sizing:border-box;display:flex;align-items:center;gap:clamp(12px,1.8vw,26px);height:68px;padding:8px 10px 8px 20px;background:#F5ECDA;border:1px solid rgba(109,109,109,.12);border-radius:999px;box-shadow:0 12px 35px rgba(70,53,38,.10);white-space:nowrap">
+      <a href="Cocoon Home.dc.html" style="display:inline-flex;align-items:center;flex:none" aria-label="Cocoon"><img src="uploads/cocoon-logo.png" alt="Cocoon" style="height:26px;width:auto;display:block"></a>
+      <div data-navlinks="" style="display:flex;align-items:center;gap:4px">
+        <a href="Cocoon Home.dc.html" style="padding:10px 11px;font-size:14px;font-weight:500;color:#3A322B">Inicio</a>
+        <button type="button" onClick="{{ openAbout }}" aria-expanded="{{ isAbout }}" aria-controls="cocoon-dropdown" style="display:inline-flex;align-items:center;gap:6px;padding:10px 12px;border:0;border-radius:999px;background:{{ bgAbout }};font-family:Quicksand,sans-serif;font-size:14px;font-weight:500;color:#3A322B;cursor:pointer">Quiénes somos <span style="font-size:11px">▾</span></button>
+        <a href="Cafe.dc.html" style="padding:10px 11px;border-radius:999px;background:rgba(156,98,64,.10);font-size:14px;font-weight:600;color:#9C6240">Café</a>
+        <button type="button" onClick="{{ openEvents }}" aria-expanded="{{ isEvents }}" aria-controls="cocoon-dropdown" style="display:inline-flex;align-items:center;gap:6px;padding:10px 12px;border:0;border-radius:999px;background:{{ bgEvents }};font-family:Quicksand,sans-serif;font-size:14px;font-weight:500;color:#3A322B;cursor:pointer">Eventos <span style="font-size:11px">▾</span></button>
+        <button type="button" onClick="{{ openClub }}" aria-expanded="{{ isClub }}" aria-controls="cocoon-dropdown" style="display:inline-flex;align-items:center;gap:6px;padding:10px 12px;border:0;border-radius:999px;background:{{ bgClub }};font-family:Quicksand,sans-serif;font-size:14px;font-weight:500;color:#3A322B;cursor:pointer">Membresías <span style="font-size:11px">▾</span></button>
+      </div>
+      <a href="{{ navHref }}" data-nav-cta="" style="display:inline-flex;align-items:center;gap:8px;justify-content:center;min-height:48px;padding:0 22px;border-radius:999px;border:1px solid rgba(58,50,43,.25);font-size:14px;font-weight:700;color:#3A322B;flex:none;white-space:nowrap" style-hover="background:#3A322B;color:#FDFAF4"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span data-login-label="">{{ navLabel }}</span></a><sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}"><button type="button" data-nav-cta="" onClick="{{ logout }}" style="flex:none;min-height:44px;padding:0 10px;border:0;background:none;font-family:Quicksand,sans-serif;font-size:13px;font-weight:600;color:#6D6D6D;cursor:pointer;white-space:nowrap" style-hover="color:#3A322B">Salir</button></sc-if>
+      <button type="button" data-nav-burger="" onClick="{{ openMobile }}" aria-expanded="{{ isMobile }}" aria-controls="cocoon-dropdown" aria-label="Abrir menú" style="display:none;flex:none;width:46px;height:46px;border:1px solid rgba(58,50,43,.16);border-radius:999px;background:transparent;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A322B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></svg></button>
+    </nav>
+
+    <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+      <div id="cocoon-dropdown" style="position:absolute;box-sizing:border-box;top:calc(100% + 12px);left:50%;transform:translateX(-50%);width:min(700px, calc(100vw - 32px));display:grid;grid-template-columns:minmax(0,1.1fr) minmax(230px,.9fr);gap:20px;padding:18px;background:#F5ECDA;border:1px solid rgba(109,109,109,.12);border-radius:30px;box-shadow:0 24px 60px rgba(70,53,38,.16);transform-origin:top center;animation:ddIn 400ms cubic-bezier(.2,.7,.2,1) both">
+        <div data-dd-content="" style="position:relative;display:flex;flex-direction:column;justify-content:center;padding:18px 8px 14px 16px;animation:{{ swapAnim }} 320ms cubic-bezier(.2,.7,.2,1) both">
+          <span aria-hidden="true" style="position:absolute;top:0;left:16px;width:24px;height:4px;border-radius:999px;background:{{ accent }}"></span>
+          <sc-if value="{{ showMenuHeader }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:14px;margin-bottom:8px;font-size:11px;font-weight:700;letter-spacing:.16em;color:#6D6D6D">{{ eyebrow }}</div>
+            <div style="margin-bottom:18px;font-family:'EB Garamond',serif;font-size:36px;line-height:1;color:#9C6240">{{ title }}</div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ links }}" as="link" hint-placeholder-count="4">
+              <a href="{{ link.href }}" onClick="{{ closeMenu }}" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 2px;font-size:15px;font-weight:500;color:#3A322B" style-hover="color:#9C6240;transform:translateX(4px)">
+                <span>{{ link.label }}</span>
+                <span aria-hidden="true" style="color:#9C6240">↗</span>
+              </a>
+            </sc-for>
+          </div>
+          <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+            <a href="./Reservar.dc.html" onClick="{{ closeMenu }}" style="display:flex;align-items:center;justify-content:center;margin-top:16px;height:50px;border-radius:999px;background:#D4A34E;font-size:15px;font-weight:700;color:#3A322B">Reservar visita</a>
+            <a href="{{ navHref }}" onClick="{{ closeMenu }}" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding-top:14px;border-top:1px solid rgba(58,50,43,.12);font-size:14px;font-weight:600;color:#6D6D6D">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              {{ navLabel }}
+            </a>
+          </sc-if>
+        </div>
+        <div data-dd-image="" style="position:relative;min-height:224px;border-radius:22px;background:#EDE4D2;border:1px solid rgba(156,98,64,.18);overflow:hidden;display:flex;align-items:flex-end;padding:14px;animation:{{ swapAnim }} 420ms cubic-bezier(.2,.7,.2,1) both">
+          <div aria-hidden="true" style="position:absolute;inset:0;background-image:{{ photoCss }};background-size:cover;background-position:center"></div>
+          <span style="position:relative;z-index:1;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;line-height:1.5;color:rgba(156,98,64,.8)">{{ imageNote }}</span>
+          <div aria-hidden="true" style="position:absolute;right:-24px;bottom:-26px;width:92px;height:92px;pointer-events:none;background-image:{{ shapeCss }};background-size:contain;background-repeat:no-repeat;background-position:center"></div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+
+
+  <div id="top"></div>
+
+  <div style="padding:clamp(96px,10vw,132px) clamp(20px,5vw,72px) clamp(20px,2.4vw,32px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(20px,3vw,48px);align-items:end">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.22em;color:#6D6D6D">COCOON CAFÉ</div>
+        <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(36px,5vw,68px);line-height:1.03;color:#9C6240">Nuestro menú</h1>
+        <p style="margin:0;max-width:44ch;font-size:clamp(16px,1.4vw,18px);line-height:1.65;color:#6D6D6D">Buen café, comida pensada y algo rico para cada miembro de la familia.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:#FDFAF4;border:1px solid rgba(58,50,43,.12);border-radius:999px;padding:6px 6px 6px 20px;box-sizing:border-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6D6D6D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Busca café, almuerzo, comida de bebé..." aria-label="Buscar en el menú" style="flex:1 1 auto;min-width:0;border:0;background:transparent;outline:none;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;padding:12px 0">
+        <span style="flex:none;display:flex;align-items:center;height:44px;padding:0 22px;border-radius:999px;background:#D4A34E;font-size:14px;font-weight:700;color:#3A322B">Buscar</span>
+      </div>
+    </div>
+  </div>
+
+  <div data-cafe-chips data-scrollpro="horizontal" style="display:flex;gap:8px;overflow-x:auto;padding:0 clamp(20px,5vw,72px) clamp(22px,2.4vw,30px);scrollbar-width:none">
+    <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="8">
+      <button type="button" onClick="{{ chip.onPick }}" style="flex:none;border:1px solid {{ chip.border }};border-radius:999px;padding:10px 18px;background:{{ chip.bg }};font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:{{ chip.color }};cursor:pointer;white-space:nowrap">{{ chip.label }}</button>
+    </sc-for>
+  </div>
+
+  <div data-cafe-shell style="display:grid;grid-template-columns:284px minmax(0,1fr);gap:clamp(20px,2.6vw,40px);padding:0 clamp(20px,5vw,72px) clamp(48px,6vw,90px);align-items:start">
+
+    <aside data-sidebar style="position:sticky;top:104px;display:flex;flex-direction:column;gap:26px;background:#FDFAF4;border:1px solid rgba(58,50,43,.08);border-radius:26px;padding:24px 22px;box-sizing:border-box">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+        <div style="font-family:'EB Garamond',serif;font-size:24px;color:#9C6240">Filtros</div>
+        <button type="button" onClick="{{ clearAll }}" style="border:0;background:transparent;padding:0;font-family:Quicksand,sans-serif;font-size:13px;font-weight:600;color:#6D6D6D;cursor:pointer;text-decoration:underline">Limpiar todo</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">CATEGORÍA</div>
+        <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="9">
+          <button type="button" onClick="{{ cat.onPick }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:transparent;padding:7px 0;font-family:Quicksand,sans-serif;font-size:15px;font-weight:{{ cat.weight }};color:{{ cat.color }};cursor:pointer;text-align:left" style-hover="color:#9C6240">
+            <span>{{ cat.label }}</span>
+            <span style="font-size:13px;color:#6D6D6D">{{ cat.count }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid rgba(58,50,43,.1);padding-top:22px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">PRECIO</div>
+        <div style="font-size:15px;color:#3A322B">Hasta {{ maxLabel }}</div>
+        <input type="range" min="3" max="16" step="1" value="{{ maxPrice }}" onInput="{{ onPrice }}" aria-label="Precio máximo" style="width:100%;accent-color:#9C6240">
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(58,50,43,.1);padding-top:22px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">PREFERENCIAS</div>
+        <sc-for list="{{ diets }}" as="d" hint-placeholder-count="6">
+          <button type="button" onClick="{{ d.onPick }}" style="display:flex;align-items:center;gap:11px;width:100%;border:0;background:transparent;padding:6px 0;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;cursor:pointer;text-align:left">
+            <span style="flex:none;width:19px;height:19px;border-radius:6px;border:1.5px solid {{ d.border }};background:{{ d.bg }};display:flex;align-items:center;justify-content:center;color:#FDFAF4;font-size:12px;font-weight:700"><sc-if value="{{ d.on }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if></span>
+            <span>{{ d.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </aside>
+
+    <div style="display:flex;flex-direction:column;gap:clamp(16px,2vw,24px);min-width:0">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+        <div data-count-wrap style="display:flex;align-items:center;gap:14px">
+          <div style="font-family:'EB Garamond',serif;font-size:clamp(21px,2vw,26px);color:#3A322B">{{ countLabel }}</div>
+          <button type="button" data-filter-toggle onClick="{{ toggleFilters }}" style="display:none;align-items:center;gap:8px;height:42px;padding:0 18px;border:1px solid rgba(58,50,43,.2);border-radius:999px;background:transparent;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#3A322B;cursor:pointer">Filtros</button>
+        </div>
+        <label data-sort-label style="display:flex;align-items:center;gap:10px;font-size:14px;color:#6D6D6D">
+          Ordenar
+          <select value="{{ sort }}" onChange="{{ onSort }}" style="height:42px;padding:0 10px 0 16px;border:1px solid rgba(58,50,43,.16);border-radius:999px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#3A322B;cursor:pointer;line-height:42px">
+            <option value="popular">Popular</option>
+            <option value="new">Novedades</option>
+            <option value="asc">Precio: menor a mayor</option>
+            <option value="desc">Precio: mayor a menor</option>
+          </select>
+        </label>
+      </div>
+
+      <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+        <div data-grid>
+          <sc-for list="{{ items }}" as="item" hint-placeholder-count="9">
+            <div onClick="{{ item.onOpen }}" style="display:flex;flex-direction:column;background:#FDFAF4;border:1px solid rgba(58,50,43,.07);border-radius:24px;overflow:hidden;cursor:pointer" style-hover="border-color:rgba(156,98,64,.35)">
+              <div style="position:relative">
+                <div style="background:#EDE4D2;display:flex;align-items:flex-end;padding:10px;box-sizing:border-box;aspect-ratio:4/3;width:100%"><span style="font-family:ui-monospace,Menlo,monospace;font-size:9.5px;line-height:1.4;color:rgba(156,98,64,.75)">{{ item.photo }}</span></div>
+                <sc-if value="{{ item.hasBadge }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute;top:12px;left:12px;padding:6px 12px;border-radius:999px;background:#F5ECDA;font-size:11px;font-weight:700;letter-spacing:.08em;color:#9C6240">{{ item.badge }}</span>
+                </sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;padding:16px 16px 18px">
+                <div style="font-family:'EB Garamond',serif;font-size:21px;line-height:1.2;color:#3A322B">{{ item.name }}</div>
+                <div style="font-size:13.5px;line-height:1.5;color:#6D6D6D">{{ item.desc }}</div>
+                <div style="font-size:12.5px;color:#9C6240">{{ item.meta }}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px">
+                  <div style="font-family:'EB Garamond',serif;font-size:21px;color:#3A322B">{{ item.priceLabel }}</div>
+                  <button type="button" onClick="{{ item.onAdd }}" aria-label="Agregar al carrito" style="flex:none;width:40px;height:40px;border:0;border-radius:999px;background:#F5ECDA;font-size:20px;line-height:1;color:#9C6240;cursor:pointer" style-hover="background:#D4A34E;color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:clamp(40px,6vw,80px) clamp(20px,3vw,40px);background:#FDFAF4;border-radius:26px">
+          <div style="font-family:'EB Garamond',serif;font-size:clamp(24px,2.6vw,32px);color:#9C6240">Todavía no hay coincidencias.</div>
+          <p style="margin:0;max-width:40ch;font-size:16px;line-height:1.6;color:#6D6D6D">Prueba con otra categoría o limpia los filtros para ver el menú completo.</p>
+          <button type="button" onClick="{{ clearAll }}" style="height:46px;padding:0 24px;border:1px solid #9C6240;border-radius:999px;background:transparent;font-family:Quicksand,sans-serif;font-size:15px;font-weight:600;color:#9C6240;cursor:pointer">Limpiar filtros</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+
+  <sc-if value="{{ showFilters }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleFilters }}" style="position:fixed;inset:0;z-index:1100;background:rgba(58,50,43,.4);display:flex;align-items:flex-end;justify-content:center">
+      <div onClick="{{ stop }}" data-scrollpro="vertical" style="width:min(560px,100%);max-height:86vh;overflow-y:auto;background:#FDFAF4;border-radius:30px 30px 0 0;padding:22px 22px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:26px;animation:sheetIn 340ms cubic-bezier(.2,.7,.2,1) 1 forwards">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="font-family:'EB Garamond',serif;font-size:26px;color:#9C6240">Filtros</div>
+          <button type="button" onClick="{{ toggleFilters }}" aria-label="Cerrar filtros" style="flex:none;width:36px;height:36px;border:1px solid rgba(58,50,43,.18);border-radius:999px;background:transparent;font-size:16px;color:#3A322B;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+        </div>
+
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">CATEGORÍA</div>
+        <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="9">
+          <button type="button" onClick="{{ cat.onPick }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:transparent;padding:7px 0;font-family:Quicksand,sans-serif;font-size:15px;font-weight:{{ cat.weight }};color:{{ cat.color }};cursor:pointer;text-align:left" style-hover="color:#9C6240">
+            <span>{{ cat.label }}</span>
+            <span style="font-size:13px;color:#6D6D6D">{{ cat.count }}</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid rgba(58,50,43,.1);padding-top:22px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">PRECIO</div>
+        <div style="font-size:15px;color:#3A322B">Hasta {{ maxLabel }}</div>
+        <input type="range" min="3" max="16" step="1" value="{{ maxPrice }}" onInput="{{ onPrice }}" aria-label="Precio máximo" style="width:100%;accent-color:#9C6240">
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(58,50,43,.1);padding-top:22px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">PREFERENCIAS</div>
+        <sc-for list="{{ diets }}" as="d" hint-placeholder-count="6">
+          <button type="button" onClick="{{ d.onPick }}" style="display:flex;align-items:center;gap:11px;width:100%;border:0;background:transparent;padding:6px 0;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;cursor:pointer;text-align:left">
+            <span style="flex:none;width:19px;height:19px;border-radius:6px;border:1.5px solid {{ d.border }};background:{{ d.bg }};display:flex;align-items:center;justify-content:center;color:#FDFAF4;font-size:12px;font-weight:700"><sc-if value="{{ d.on }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if></span>
+            <span>{{ d.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+    
+        <button type="button" onClick="{{ toggleFilters }}" style="height:52px;border:0;border-radius:999px;background:#D4A34E;font-family:Quicksand,sans-serif;font-size:15px;font-weight:700;color:#3A322B;cursor:pointer">Ver {{ countLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ false }}">
+    <a data-cart-desktop href="#" onClick="{{ openCart }}" style="position:fixed;right:24px;bottom:24px;z-index:900;display:flex;align-items:center;gap:12px;height:56px;padding:0 26px;border-radius:999px;background:#3A322B;font-size:15px;font-weight:700;color:#FDFAF4;box-shadow:0 14px 36px rgba(70,53,38,.24)">Carrito · {{ cartLabel }}</a>
+    <a data-cart-mobile href="#" onClick="{{ openCart }}" style="display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:900;align-items:center;justify-content:center;gap:10px;height:54px;border-radius:999px;background:#3A322B;font-size:15px;font-weight:700;color:#FDFAF4;box-shadow:0 14px 36px rgba(70,53,38,.24)">Ver carrito · {{ cartLabel }}</a>
+  </sc-if>
+
+  <sc-if value="{{ cartOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCart }}" style="position:fixed;inset:0;z-index:1200;background:rgba(58,50,43,.4);display:flex;justify-content:flex-end">
+      <aside onClick="{{ stop }}" data-cart-panel style="width:min(420px,100%);height:100%;background:#FDFAF4;display:flex;flex-direction:column;box-sizing:border-box;animation:cartIn 380ms cubic-bezier(.2,.7,.2,1) 1 forwards">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 24px 16px;border-bottom:1px solid rgba(58,50,43,.1)">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="font-family:'EB Garamond',serif;font-size:26px;line-height:1.1;color:#9C6240">Tu pedido</div>
+            <div style="font-size:13px;color:#6D6D6D">{{ cartCountLabel }}</div>
+          </div>
+          <button type="button" onClick="{{ closeCart }}" aria-label="Cerrar carrito" style="flex:none;width:38px;height:38px;border:1px solid rgba(58,50,43,.18);border-radius:999px;background:transparent;font-size:16px;color:#3A322B;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+        </div>
+
+        <div data-scrollpro="vertical" style="flex:1 1 auto;min-height:0;overflow-y:auto;padding:6px 24px 20px">
+          <sc-for list="{{ cartLines }}" as="line" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:8px;padding:18px 0;border-bottom:1px solid rgba(58,50,43,.08)">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px">
+                <div style="font-family:'EB Garamond',serif;font-size:19px;line-height:1.25;color:#3A322B">{{ line.name }}</div>
+                <div style="font-family:'EB Garamond',serif;font-size:19px;color:#3A322B;white-space:nowrap">{{ line.lineTotal }}</div>
+              </div>
+              <sc-if value="{{ line.hasExtras }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;line-height:1.45;color:#9C6240">{{ line.extras }}</div>
+              </sc-if>
+              <sc-if value="{{ line.hasNote }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;line-height:1.45;color:#6D6D6D">Nota: {{ line.note }}</div>
+              </sc-if>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:2px">
+                <div style="display:flex;align-items:center;gap:4px;border:1px solid rgba(58,50,43,.16);border-radius:999px;padding:3px">
+                  <button type="button" onClick="{{ line.dec }}" aria-label="Quitar uno" style="width:34px;height:34px;border:0;border-radius:999px;background:transparent;font-size:17px;color:#3A322B;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+                  <span style="min-width:20px;text-align:center;font-size:15px;font-weight:700;color:#3A322B">{{ line.qty }}</span>
+                  <button type="button" onClick="{{ line.inc }}" aria-label="Agregar uno" style="width:34px;height:34px;border:0;border-radius:999px;background:transparent;font-size:17px;color:#3A322B;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+                </div>
+                <button type="button" onClick="{{ line.remove }}" style="border:0;background:transparent;padding:0;font-family:Quicksand,sans-serif;font-size:13px;font-weight:600;color:#6D6D6D;cursor:pointer;text-decoration:underline">Quitar</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="flex:none;display:flex;flex-direction:column;gap:14px;padding:20px 24px 26px;border-top:1px solid rgba(58,50,43,.1);background:#F5ECDA">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:14px">
+            <span style="font-size:15px;color:#6D6D6D">Subtotal</span>
+            <span style="font-family:'EB Garamond',serif;font-size:26px;color:#3A322B">{{ cartSubtotal }}</span>
+          </div>
+          <div style="font-size:13px;line-height:1.5;color:#6D6D6D">Pagas en la mesa o en recepción. Te avisamos cuando esté listo.</div>
+          <a href="#" style="display:flex;align-items:center;justify-content:center;height:52px;border-radius:999px;background:#D4A34E;font-size:15px;font-weight:700;color:#3A322B">Confirmar pedido</a>
+          <button type="button" onClick="{{ closeCart }}" style="border:0;background:transparent;padding:0;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#9C6240;cursor:pointer">Seguir viendo el menú</button>
+        </div>
+      </aside>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDetail }}" style="position:fixed;inset:0;z-index:1100;background:rgba(58,50,43,.4);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box">
+      <div onClick="{{ stop }}" data-detail-sheet data-scrollpro="vertical" style="width:min(760px,100%);max-height:88vh;overflow-y:auto;background:#FDFAF4;border-radius:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;animation:sheetIn 340ms cubic-bezier(.2,.7,.2,1) 1 forwards">
+        <div data-detail-photo style="background:#EDE4D2;display:flex;align-items:flex-end;padding:10px;box-sizing:border-box;min-height:260px;height:100%"><span style="font-family:ui-monospace,Menlo,monospace;font-size:9.5px;line-height:1.4;color:rgba(156,98,64,.75)">{{ detail.photo }}</span></div>
+        <div data-detail-body style="display:flex;flex-direction:column;gap:14px;padding:clamp(22px,3vw,32px)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px">
+            <div data-detail-title style="font-family:'EB Garamond',serif;font-size:clamp(26px,3vw,34px);line-height:1.1;color:#9C6240">{{ detail.name }}</div>
+            <button type="button" onClick="{{ closeDetail }}" aria-label="Cerrar" style="flex:none;width:36px;height:36px;border:1px solid rgba(58,50,43,.18);border-radius:999px;background:transparent;font-size:16px;color:#3A322B;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+          </div>
+          <p style="margin:0;font-size:15.5px;line-height:1.6;color:#6D6D6D">{{ detail.desc }}</p>
+          <div style="font-size:13px;color:#9C6240">{{ detail.meta }}</div>
+
+          <div data-addon-list style="display:flex;flex-direction:column;gap:18px;border-top:1px solid rgba(58,50,43,.1);padding-top:16px">
+            <sc-for list="{{ addonGroups }}" as="g" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">{{ g.title }} <span style="font-weight:500;letter-spacing:0;text-transform:none">· {{ g.hint }}</span></div>
+                <sc-for list="{{ g.items }}" as="a" hint-placeholder-count="2">
+                  <button type="button" onClick="{{ a.onPick }}" style="display:flex;align-items:center;gap:12px;width:100%;border:1px solid {{ a.border }};border-radius:14px;background:{{ a.bg }};padding:11px 14px;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;cursor:pointer;text-align:left">
+                    <span style="flex:none;width:19px;height:19px;border-radius:{{ a.radius }};border:1.5px solid {{ a.markBorder }};background:{{ a.markBg }};display:flex;align-items:center;justify-content:center;color:{{ a.markColor }};font-size:11px;font-weight:700"><sc-if value="{{ a.checkOn }}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></sc-if><sc-if value="{{ a.dotOn }}" hint-placeholder-val="{{ true }}"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" stroke="none"/></svg></sc-if></span>
+                    <span style="flex:1 1 auto;min-width:0">{{ a.label }}</span>
+                    <span style="flex:none;color:#6D6D6D">{{ a.price }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+
+          <label data-detail-note style="display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:#6D6D6D">NOTAS
+            <input value="{{ note }}" onInput="{{ onNote }}" placeholder="Sin azúcar, para llevar..." style="border:1px solid rgba(58,50,43,.16);border-radius:14px;background:#F5ECDA;padding:12px 14px;font-family:Quicksand,sans-serif;font-size:15px;color:#3A322B;outline:none">
+          </label>
+
+          <div data-detail-actions style="display:flex;align-items:center;gap:14px;margin-top:4px">
+            <div style="display:flex;align-items:center;gap:6px;border:1px solid rgba(58,50,43,.16);border-radius:999px;padding:4px">
+              <button type="button" onClick="{{ dec }}" aria-label="Menos" style="width:38px;height:38px;border:0;border-radius:999px;background:transparent;font-size:18px;color:#3A322B;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+              <span style="min-width:22px;text-align:center;font-size:16px;font-weight:700;color:#3A322B">{{ qty }}</span>
+              <button type="button" onClick="{{ inc }}" aria-label="Más" style="width:38px;height:38px;border:0;border-radius:999px;background:transparent;font-size:18px;color:#3A322B;cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+            </div>
+            <button type="button" onClick="{{ addDetail }}" style="flex:1 1 auto;height:52px;border:0;border-radius:999px;background:#D4A34E;font-family:Quicksand,sans-serif;font-size:15px;font-weight:700;color:#3A322B;cursor:pointer">Agregar · {{ detailTotal }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="background:#F5ECDA;padding:clamp(28px,4vw,48px) clamp(20px,5vw,72px) clamp(28px,3.5vw,44px)">
+    <div style="width:100%;aspect-ratio:21/9;min-height:200px;background:#EDE4D2;border:1px dashed rgba(156,98,64,.3);border-radius:clamp(20px,2.4vw,28px);display:flex;align-items:flex-end;padding:clamp(18px,2.4vw,30px);box-sizing:border-box">
+      <span style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;line-height:1.5;color:rgba(156,98,64,.8)">foto ancha: niños en movimiento dentro de Cocoon · 21:9</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(28px,4vw,56px);margin-top:clamp(40px,5vw,72px);align-items:start">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.16em;color:#6D6D6D">CONTACTO</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:clamp(16px,1.5vw,18px);line-height:1.5;color:#3A322B">Costa del Este, Ciudad de Panamá<br>Av. Centenario, PH Distrito, planta baja</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <a href="#" style="font-size:clamp(16px,1.5vw,18px);color:#3A322B">+507 6000-0000</a>
+          <div style="font-size:14px;color:#6D6D6D">WhatsApp, lunes a domingo</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <a href="#" style="font-size:clamp(16px,1.5vw,18px);color:#3A322B">hola@cocoon.pa</a>
+          <div style="font-size:14px;color:#6D6D6D">Lunes a domingo, 8am–10pm</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.16em;color:#6D6D6D">COCOON</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <a href="#mundos" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Quiénes somos</a>
+          <a href="#mundos" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Nuestros espacios</a>
+          <a href="Cafe.dc.html" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Cafetería</a>
+          <a href="Cocoon Home.dc.html#visitas" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Eventos</a>
+          <a href="#club" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Cocoon Club</a>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.16em;color:#6D6D6D">PARA PAPÁS</div>
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+          <a href="./Reservar.dc.html" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Reserva tu visita</a>
+          <a href="Cocoon Home.dc.html#visitas" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Day Pass y membresías</a>
+          <a href="#" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Preguntas frecuentes</a>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <a href="Politicas.dc.html" style="font-size:clamp(16px,1.5vw,18px);font-weight:600;color:#3A322B">Políticas</a>
+            <div style="font-size:14px;color:#6D6D6D">Cumpleaños y eventos</div>
+          </div>
+          <a href="#" style="display:inline-flex;align-items:center;gap:10px;margin-top:6px;height:48px;padding:0 24px;border-radius:999px;border:1px solid rgba(58,50,43,.3);font-size:15px;font-weight:700;color:#3A322B;white-space:nowrap" style-hover="background:#3A322B;color:#FDFAF4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Iniciar sesión
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;margin-top:clamp(40px,5vw,72px);padding-top:clamp(20px,2.4vw,28px);border-top:1px solid rgba(58,50,43,.12)">
+      <div style="display:inline-flex;align-items:center"><img src="uploads/cocoon-logo.png" alt="Cocoon" style="height:clamp(30px,3vw,36px);width:auto;display:block"></div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <a href="#" aria-label="Cocoon" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;color:#3A322B" style-hover="background:rgba(58,50,43,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+        <a href="#" aria-label="Cocoon" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;color:#3A322B" style-hover="background:rgba(58,50,43,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="#" aria-label="Cocoon" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;color:#3A322B" style-hover="background:rgba(58,50,43,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></a>
+        <a href="#" aria-label="Cocoon" style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:999px;color:#3A322B" style-hover="background:rgba(58,50,43,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg></a>
+      </div>
+      <div style="font-size:14px;color:#6D6D6D">© Cocoon · Costa del Este, Panamá</div>
+    </div>
+  </div>
+
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { open: 0, menu: null, swap: 0, cat: 'Todo', diet: [], maxPrice: 16, sort: 'popular', query: '', cart: [], cartOpen: false, detail: null, qty: 1, addons: [], note: '' };
+  menus = {
+    about: {
+      accent: '#9CB4C7', eyebrow: 'DESCUBRE COCOON', title: 'Quiénes somos',
+      shape: 'uploads/cocoon_element_19.png',
+      photo: 'uploads/full-shot-kids-playing-with-eco-toys-indoors-sm.jpg',
+      note: 'foto: niños explorando uno de los espacios Cocoon · vertical, recorte amplio',
+      links: [
+        { label: 'Quiénes somos', href: 'Quienes Somos.dc.html' },
+        { label: 'Nuestros Mini Mundos', href: 'Mini Mundos.dc.html' }
+      ]
+    },
+    events: {
+      accent: '#9C6240', eyebrow: 'CELEBRA EN COCOON', title: 'Eventos',
+      shape: 'uploads/cocoon_element_04.png',
+      photo: 'uploads/side-view-kids-celebrating-friend-sm.jpg',
+      note: 'foto: mesa de cumpleaños montada en el salón privado · vertical',
+      links: [
+        { label: 'Cumpleaños', href: 'Cumpleanos.dc.html' },
+        { label: 'Eventos privados', href: 'Eventos Privados.dc.html' }
+      ]
+    },
+    club: {
+      accent: '#BAB25A', eyebrow: 'VIVE COCOON', title: 'Cocoon Club',
+      shape: 'uploads/cocoon_element_13.png',
+      photo: 'uploads/page021_img001-a8918a6e.webp',
+      note: 'foto: familia habitual llegando al club, escena cálida · vertical',
+      links: [
+        { label: 'Day Pass', href: 'Day Pass.dc.html' },
+        { label: 'Planes de membresía', href: 'Cocoon Home.dc.html#club' }
+      ]
+    },
+    mobile: {
+      accent: '#9C6240', eyebrow: 'NAVEGA COCOON', title: 'Menú',
+      shape: 'uploads/cocoon_element_04.png', note: '',
+      links: [
+        { label: 'Inicio', href: 'Cocoon Home.dc.html' },
+        { label: 'Quiénes somos', href: 'Quienes Somos.dc.html' },
+        { label: 'Nuestros Mini Mundos', href: 'Mini Mundos.dc.html' },
+        { label: 'Café', href: 'Cafe.dc.html' },
+        { label: 'Cumpleaños', href: 'Cumpleanos.dc.html' },
+        { label: 'Eventos privados', href: 'Eventos Privados.dc.html' },
+        { label: 'Day Pass', href: 'Day Pass.dc.html' },
+        { label: 'Planes de membresía', href: 'Cocoon Home.dc.html#club' }
+      ]
+    }
+  };
+  pick(key) {
+    this.setState(s => s.menu === key ? { menu: null } : { menu: key, swap: s.swap + 1 });
+  }
+  componentDidMount() {
+    this._reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const EASE = 'cubic-bezier(.2,.7,.2,1)';
+
+    this._pass = () => {
+      const vh = window.innerHeight;
+
+      document.querySelectorAll('[data-reveal]').forEach(el => {
+        if (this._reduced) { el.style.opacity = ''; el.style.transform = ''; return; }
+        if (!el._init) {
+          el._init = 1;
+          const scope = el.closest('[data-reveal-scope]') || document.body;
+          scope._n = (scope._n || 0) + 1;
+          el._delay = Math.min(scope._n - 1, 4) * 90;
+          el.style.transition = 'opacity 800ms ' + EASE + ' ' + el._delay + 'ms, transform 800ms ' + EASE + ' ' + el._delay + 'ms';
+        }
+        const shown = el.getBoundingClientRect().top < vh * 0.92;
+        el.style.opacity = shown ? '1' : '0';
+        el.style.transform = shown ? 'none' : 'translateY(18px)';
+      });
+
+      document.querySelectorAll('[data-shape]').forEach(el => {
+        if (this._reduced) { el.style.opacity = ''; return; }
+        if (!el._init) {
+          el._init = 1;
+          el._base = el.getAttribute('style') && el.style.transform || '';
+          el.style.transition = 'opacity 900ms ' + EASE + ', transform 900ms ' + EASE;
+        }
+        const shown = el.getBoundingClientRect().top < vh * 0.9;
+        el.style.opacity = shown ? '1' : '0';
+        if (!el.hasAttribute('data-float')) {
+          el.style.transform = shown ? el._base : el._base + ' scale(.92) rotate(-3deg)';
+        }
+      });
+
+      if (this._reduced) return;
+
+      const jw = document.querySelector('[data-journey], [data-journey-sm]');
+      const host = jw && jw.parentElement;
+      if (host) {
+        const rr = host.getBoundingClientRect();
+        const prog = Math.min(1, Math.max(0, (-rr.top + vh * 0.72) / Math.max(1, rr.height)));
+        document.querySelectorAll('[data-journey] path, [data-journey-sm] path').forEach(p => {
+          if (!p._len) {
+            p._len = p.getTotalLength();
+            p.style.strokeDasharray = p._len;
+          }
+          const a = parseFloat(p.dataset.from || 0), b = parseFloat(p.dataset.to || 1);
+          const local = Math.min(1, Math.max(0, (prog - a) / Math.max(0.01, b - a)));
+          p.style.strokeDashoffset = (p._len * (1 - local)).toFixed(2);
+        });
+      }
+
+      document.querySelectorAll('[data-parallax]').forEach(el => {
+        const r = el.getBoundingClientRect();
+        const k = (vh / 2 - (r.top + r.height / 2)) / vh;
+        el.style.marginTop = (k * parseFloat(el.dataset.parallax)).toFixed(1) + 'px';
+      });
+    };
+
+    this._onKey = e => { if (e.key === 'Escape') this.setState({ menu: null }); };
+    this._onDown = e => {
+      const w = document.querySelector('[data-nav-wrapper]');
+      if (w && !w.contains(e.target)) this.setState({ menu: null });
+    };
+    window.addEventListener('keydown', this._onKey);
+    document.addEventListener('mousedown', this._onDown);
+
+    this._sched = () => {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => { this._raf = null; try { this._pass(); } catch (e) {} });
+    };
+    document.addEventListener('scroll', this._sched, { passive: true, capture: true });
+    window.addEventListener('resize', this._sched);
+    this._sched();
+    this._settle = setTimeout(this._sched, 400);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    clearTimeout(this._settle);
+    document.removeEventListener('scroll', this._sched, true);
+    window.removeEventListener('resize', this._sched);
+    window.removeEventListener('keydown', this._onKey);
+    document.removeEventListener('mousedown', this._onDown);
+  }
+  toggle(i) { this.setState(s => ({ open: s.open === i ? null : i })); }
+
+  cafeInit() {
+    if (this._menu) return;
+    const P = (name, cat, price, desc, meta, diet, badge, photo) => ({ name, cat, price, desc, meta, diet, badge, photo });
+    this._menu = [
+      P('Cappuccino','Café',3.75,'Espresso de origen panameño con leche texturizada.','Listo en 4 min',['vegetariano'],'Popular','foto: cappuccino con arte en leche · 4:3'),
+      P('Iced Latte','Café',4.25,'Doble espresso, hielo y leche fría. Opción de avena.','Listo en 3 min',['vegetariano','sin-lactosa'],'','foto: latte helado en vaso alto · 4:3'),
+      P('Cold Brew','Café',4.5,'Reposado 18 horas. Suave, sin acidez.','Listo en 2 min',['vegetariano'],'','foto: cold brew servido sobre hielo · 4:3'),
+      P('Matcha Latte','Café',5.0,'Matcha ceremonial batido al momento.','Listo en 5 min',['vegetariano','organico'],'Nuevo','foto: matcha latte verde · 4:3'),
+      P('Avocado Toast','Desayuno',8.5,'Masa madre, aguacate, limón y semillas tostadas.','Listo en 10 min',['vegetariano','organico'],'','foto: tostada de aguacate · 4:3'),
+      P('Pancakes','Desayuno',7.5,'Tres pancakes esponjosos con fruta de temporada.','Listo en 12 min',['vegetariano'],'Popular','foto: torre de pancakes con fruta · 4:3'),
+      P('Yogurt Bowl','Desayuno',6.5,'Yogurt griego, granola casera y miel local.','Listo en 5 min',['vegetariano','organico'],'','foto: bowl de yogurt y granola · 4:3'),
+      P('Croissant Sandwich','Desayuno',7.0,'Croissant de mantequilla, huevo y queso.','Listo en 8 min',['vegetariano'],'','foto: croissant relleno · 4:3'),
+      P('Grilled Cheese','Almuerzo',8.0,'Tres quesos fundidos en pan de masa madre.','Listo en 10 min',['vegetariano'],'','foto: grilled cheese partido a la mitad · 4:3'),
+      P('Chicken Wrap','Almuerzo',9.5,'Pollo a la plancha, vegetales frescos y yogurt de hierbas.','Listo en 12 min',[],'','foto: wrap de pollo cortado · 4:3'),
+      P('Tomato Soup','Almuerzo',6.75,'Tomate asado lentamente con albahaca.','Listo en 8 min',['vegetariano','sin-gluten'],'','foto: sopa de tomate con pan · 4:3'),
+      P('Pasta Bowl',' Almuerzo'.trim(),10.5,'Pasta corta con salsa de tomate casera y parmesano.','Listo en 14 min',['vegetariano'],'','foto: bowl de pasta · 4:3'),
+      P('Mini Pancakes','Niños',5.5,'Porción pequeña con fruta y un toque de miel.','Listo en 10 min',['vegetariano','favorito-ninos'],'Favorito','foto: mini pancakes en plato de niño · 4:3'),
+      P('Mac & Cheese','Niños',6.5,'Cremoso, en porción para manos pequeñas.','Listo en 12 min',['vegetariano','favorito-ninos'],'','foto: mac and cheese en bowl pequeño · 4:3'),
+      P('Fruit Bowl','Niños',4.5,'Fruta de temporada cortada en trozos seguros.','Listo en 4 min',['organico','sin-gluten','sin-lactosa','favorito-ninos'],'','foto: bowl de fruta cortada · 4:3'),
+      P('Kids Grilled Sandwich','Niños',5.75,'Pan suave, queso y jamón de pavo.','Listo en 9 min',['favorito-ninos'],'','foto: sándwich cortado en triángulos · 4:3'),
+      P('Puré de camote','Bebés',4.0,'Camote orgánico al vapor, sin sal ni azúcar.','Listo en 3 min',['organico','sin-gluten','sin-lactosa','bebe'],'','foto: puré de camote en frasco · 4:3'),
+      P('Puré de manzana y avena','Bebés',4.0,'Manzana cocida con avena fina.','Listo en 3 min',['organico','vegetariano','bebe'],'','foto: puré de manzana y avena · 4:3'),
+      P('Zanahoria y calabaza','Bebés',4.25,'Mezcla suave, textura para primeras cucharadas.','Listo en 3 min',['organico','sin-gluten','bebe'],'Nuevo','foto: puré naranja en bowl pequeño · 4:3'),
+      P('Banano y pera','Bebés',3.75,'Fruta madura machacada al momento.','Listo en 2 min',['organico','sin-lactosa','bebe'],'','foto: puré de banano y pera · 4:3'),
+      P('Banana Bread','Pastelería',4.25,'Horneado cada mañana, con nuez tostada.','Listo en 2 min',['vegetariano'],'Popular','foto: rebanada de pan de banano · 4:3'),
+      P('Mini Muffins','Pastelería',3.5,'Tres muffins pequeños de vainilla y arándano.','Listo en 2 min',['vegetariano','favorito-ninos'],'','foto: mini muffins en plato · 4:3'),
+      P('Galletas de avena','Pastelería',3.0,'Avena, chispas de chocolate y un toque de canela.','Listo en 2 min',['vegetariano'],'','foto: galletas apiladas · 4:3'),
+      P('Barra de granola','Snacks',3.25,'Granola prensada con dátil y semillas.','Listo en 1 min',['organico','sin-lactosa'],'','foto: barra de granola partida · 4:3'),
+      P('Jugo natural','Bebidas',4.0,'Exprimido del día: naranja, piña o maracuyá.','Listo en 4 min',['organico','sin-gluten','sin-lactosa'],'','foto: jugo natural en vaso · 4:3'),
+      P('Smoothie','Bebidas',5.5,'Fruta, yogurt y un puñado de espinaca.','Listo en 5 min',['vegetariano','organico'],'','foto: smoothie en vaso alto · 4:3'),
+      P('Limonada de casa','Bebidas',3.5,'Limón, hierbabuena y poca azúcar.','Listo en 3 min',['sin-gluten','sin-lactosa'],'','foto: limonada con hierbabuena · 4:3'),
+      P('Té helado','Bebidas',3.5,'Té negro frío con durazno.','Listo en 3 min',['sin-gluten','sin-lactosa'],'','foto: té helado en jarra · 4:3')
+    ];
+    this._dietLabels = [['organico','Orgánico'],['vegetariano','Vegetariano'],['sin-gluten','Sin gluten'],['sin-lactosa','Sin lácteos'],['bebe','Apto bebés'],['favorito-ninos','Favorito de niños']];
+    this._addonList = [
+      ['Entera',0,'leche'],['Leche de avena',0.6,'leche'],['Leche de almendra',0.6,'leche'],
+      ['Normal',0,'azucar'],['Sin azúcar',0,'azucar'],
+      ['Shot extra',0.9,'multi'],['Fruta extra',1.2,'multi']
+    ];
+    this._addonGroups = [
+      ['leche','LECHE','elige una'],
+      ['azucar','AZÚCAR','elige una'],
+      ['multi','EXTRAS','opcional']
+    ];
+  }
+  money(n) { return '$'.concat(n.toFixed(2)); }
+  cafeFiltered() {
+    const st = this.state;
+    const q = (st.query || '').trim().toLowerCase();
+    let out = this._menu.filter(p => {
+      if (st.cat && st.cat !== 'Todo' && p.cat !== st.cat) return false;
+      if (p.price > (st.maxPrice ?? 16)) return false;
+      if ((st.diet || []).some(d => !p.diet.includes(d))) return false;
+      if (q && !(p.name + ' ' + p.desc + ' ' + p.cat).toLowerCase().includes(q)) return false;
+      return true;
+    });
+    const s = st.sort || 'popular';
+    if (s === 'asc') out = out.slice().sort((a, b) => a.price - b.price);
+    if (s === 'desc') out = out.slice().sort((a, b) => b.price - a.price);
+    if (s === 'new') out = out.slice().sort((a, b) => (b.badge === 'Nuevo') - (a.badge === 'Nuevo'));
+    if (s === 'popular') out = out.slice().sort((a, b) => (!!b.badge) - (!!a.badge));
+    return out;
+  }
+  addToCart(p, n, extras, note) {
+    const label = (extras || []).join(', ');
+    const key = p.name + '|' + label + '|' + (note || '');
+    this.setState(s => {
+      const cart = (s.cart || []).slice();
+      const at = cart.findIndex(l => l.key === key);
+      if (at > -1) cart[at] = Object.assign({}, cart[at], { qty: cart[at].qty + n });
+      else cart.push({ key, name: p.name, price: p.price, qty: n, extras: label, note: note || '' });
+      return { cart, cartOpen: true };
+    });
+  }
+  cartLines() { return this.state.cart || []; }
+  cartSum() { return this.cartLines().reduce((t, l) => t + l.price * l.qty, 0); }
+  cartQty() { return this.cartLines().reduce((t, l) => t + l.qty, 0); }
+  setLineQty(key, n) {
+    this.setState(s => ({
+      cart: (s.cart || []).map(l => l.key === key ? Object.assign({}, l, { qty: n }) : l).filter(l => l.qty > 0)
+    }));
+  }
+  cafeVals() {
+    this.cafeInit();
+    const st = this.state;
+    const items = this.cafeFiltered();
+    const cats = ['Todo','Café','Desayuno','Almuerzo','Niños','Bebés','Pastelería','Bebidas','Snacks'];
+    const active = st.cat || 'Todo';
+    const d = st.detail;
+    const addonPrice = (st.addons || []).reduce((t, i) => t + this._addonList[i][1], 0);
+    const qty = st.qty || 1;
+    return {
+      query: st.query || '',
+      onQuery: e => this.setState({ query: e.target.value }),
+      chips: cats.map(c => ({
+        label: c, onPick: () => this.setState({ cat: c }),
+        bg: c === active ? '#9C6240' : '#FDFAF4',
+        color: c === active ? '#FDFAF4' : '#3A322B',
+        border: c === active ? '#9C6240' : 'rgba(58,50,43,.14)'
+      })),
+      cats: cats.map(c => ({
+        label: c, onPick: () => this.setState({ cat: c }),
+        count: c === 'Todo' ? this._menu.length : this._menu.filter(p => p.cat === c).length,
+        weight: c === active ? '700' : '500',
+        color: c === active ? '#9C6240' : '#3A322B'
+      })),
+      maxPrice: st.maxPrice ?? 16,
+      maxLabel: this.money(st.maxPrice ?? 16),
+      onPrice: e => this.setState({ maxPrice: Number(e.target.value) }),
+      diets: this._dietLabels.map(([k, label]) => {
+        const on = (st.diet || []).includes(k);
+        return {
+          label, on,
+          bg: on ? '#9C6240' : 'transparent',
+          border: on ? '#9C6240' : 'rgba(58,50,43,.28)',
+          onPick: () => this.setState(s => ({ diet: (s.diet || []).includes(k) ? s.diet.filter(x => x !== k) : [...(s.diet || []), k] }))
+        };
+      }),
+      clearAll: () => this.setState({ cat: 'Todo', diet: [], maxPrice: 16, query: '' }),
+      showFilters: !!st.showFilters,
+      toggleFilters: () => this.setState(s => ({ showFilters: !s.showFilters })),
+      sort: st.sort || 'popular',
+      onSort: e => this.setState({ sort: e.target.value }),
+      countLabel: items.length + (items.length === 1 ? ' plato' : ' platos'),
+      hasResults: items.length > 0,
+      isEmpty: items.length === 0,
+      items: items.map(p => ({
+        name: p.name, desc: p.desc, meta: p.meta, photo: p.photo,
+        priceLabel: this.money(p.price),
+        badge: p.badge, hasBadge: !!p.badge,
+        onOpen: () => this.setState({ detail: p, qty: 1, addons: [], note: '' }),
+        onAdd: e => { e.stopPropagation(); this.addToCart(p, 1); }
+      })),
+      hasCart: this.cartQty() > 0,
+      cartLabel: this.cartQty() + (this.cartQty() === 1 ? ' artículo · ' : ' artículos · ') + this.money(this.cartSum()),
+      cartOpen: !!st.cartOpen && this.cartQty() > 0,
+      openCart: e => { if (e) e.preventDefault(); this.setState({ cartOpen: true }); },
+      closeCart: () => this.setState({ cartOpen: false }),
+      cartCountLabel: this.cartQty() + (this.cartQty() === 1 ? ' artículo' : ' artículos'),
+      cartSubtotal: this.money(this.cartSum()),
+      cartLines: this.cartLines().map(l => ({
+        name: l.name,
+        extras: l.extras,
+        hasExtras: !!l.extras,
+        note: l.note,
+        hasNote: !!l.note,
+        qty: l.qty,
+        lineTotal: this.money(l.price * l.qty),
+        inc: () => this.setLineQty(l.key, l.qty + 1),
+        dec: () => this.setLineQty(l.key, l.qty - 1),
+        remove: () => this.setLineQty(l.key, 0)
+      })),
+      detailOpen: !!d,
+      detail: d || { name: '', desc: '', meta: '', photo: '' },
+      closeDetail: () => this.setState({ detail: null }),
+      stop: e => e.stopPropagation(),
+      qty,
+      inc: () => this.setState(s => ({ qty: (s.qty || 1) + 1 })),
+      dec: () => this.setState(s => ({ qty: Math.max(1, (s.qty || 1) - 1) })),
+      note: st.note || '',
+      onNote: e => this.setState({ note: e.target.value }),
+      addonGroups: this._addonGroups.map(([key, title, hint]) => ({
+        title, hint,
+        items: this._addonList.map((a, i) => [a, i]).filter(([a]) => a[2] === key).map(([[label, price, group], i]) => {
+        const on = (st.addons || []).includes(i);
+        const single = group !== 'multi';
+        return {
+          label, price: price ? '+' + this.money(price) : 'incluido',
+          bg: on ? '#F5ECDA' : 'transparent',
+          border: on ? '#9C6240' : 'rgba(58,50,43,.14)',
+          radius: single ? '999px' : '6px',
+          checkOn: on && !single, dotOn: on && single,
+          markBg: on && !single ? '#9C6240' : 'transparent',
+          markColor: on && single ? '#9C6240' : '#FDFAF4',
+          markBorder: on ? '#9C6240' : 'rgba(58,50,43,.28)',
+          onPick: () => this.setState(s => {
+            const cur = s.addons || [];
+            if (cur.includes(i)) return { addons: cur.filter(x => x !== i) };
+            const kept = single ? cur.filter(x => this._addonList[x][2] !== group) : cur;
+            return { addons: [...kept, i] };
+          })
+        };
+        })
+      })),
+      detailTotal: d ? this.money((d.price + addonPrice) * qty) : '',
+      addDetail: () => {
+        if (!d) return;
+        const extras = (st.addons || []).map(i => this._addonList[i][0]);
+        this.addToCart({ name: d.name, price: d.price + addonPrice }, qty, extras, st.note);
+        this.setState({ detail: null });
+      }
+    };
+  }
+
+  renderVals() {
+    const o = this.state.open;
+    const key = this.state.menu;
+    const m = key ? this.menus[key] : null;
+    const tint = 'rgba(156,180,199,.18)';
+    const v = {
+      menuOpen: !!m,
+      isAbout: key === 'about', isEvents: key === 'events', isClub: key === 'club',
+      bgAbout: key === 'about' ? tint : 'transparent',
+      bgEvents: key === 'events' ? tint : 'transparent',
+      bgClub: key === 'club' ? tint : 'transparent',
+      openAbout: () => this.pick('about'),
+      openEvents: () => this.pick('events'),
+      openClub: () => this.pick('club'),
+      isMobile: key === 'mobile',
+      openMobile: () => this.pick('mobile'),
+      closeMenu: () => this.setState({ menu: null }),
+      swapAnim: this.state.swap % 2 ? 'swapA' : 'swapB',
+      accent: m ? m.accent : '#9CB4C7',
+      eyebrow: m ? m.eyebrow : '',
+      showMenuHeader: key !== 'mobile',
+      title: m ? m.title : '',
+      links: m ? m.links : [],
+      imageNote: m && !m.photo ? m.note : '',
+      photoCss: m && m.photo ? 'url("' + m.photo + '")' : 'none',
+      shapeCss: m ? 'url("' + m.shape + '")' : 'none'
+    };
+    for (let i = 0; i < 4; i++) {
+      v['open' + i] = o === i;
+      v['sign' + i] = o === i ? '–' : '+';
+      v['rot' + i] = o === i ? 'rotate(180deg)' : 'none';
+      v['toggle' + i] = () => this.toggle(i);
+    }
+    Object.assign(v, this.cafeVals());
+    return v;
+  }
+}
+
+
+const __rvBase = Component.prototype.renderVals;
+Component.prototype.renderVals = function () {
+  const v = __rvBase.call(this) || {};
+  let s = null;
+  try { const r = localStorage.getItem('cocoon_session'); s = r ? JSON.parse(r) : null; } catch (e) { s = null; }
+  v.loggedIn = !!s;
+  v.navLabel = s ? 'Hola, ' + String(s.name || '').split(' ')[0] : 'Iniciar sesión';
+  v.navHref = './Mi Cocoon.dc.html';
+  v.logout = () => { try { localStorage.removeItem('cocoon_session'); } catch (e) {} this.forceUpdate(); };
+  return v;
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F5ECDA; }
+  a { color:#9C6240; text-decoration:none; }
+  a:hover { color:#3A322B; }
+  input:focus, button:focus { outline:2px solid #9CB4C7; outline-offset:2px; }
+  [data-sidebar] { display:flex; }
+  [data-bottomnav] { display:none; }
+  @media (max-width: 880px) {
+    [data-sidebar] { display:none !important; }
+    [data-bottomnav] { display:flex !important; }
+    [data-main] { padding-bottom:88px !important; margin-left:0 !important; }
+    [data-cards4] { grid-template-columns:1fr !important; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation:none !important; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#F5ECDA;font-family:Quicksand,sans-serif;color:#3A322B">
+
+<sc-if value="{{ isAuthScreen }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box">
+    <div style="width:min(420px,100%);display:flex;flex-direction:column;gap:20px">
+      <a href="Cocoon Home.dc.html" style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:#6D6D6D;align-self:flex-start">← Volver a Cocoon</a>
+      <a href="Cocoon Home.dc.html" style="display:inline-flex;align-items:center;justify-content:center" aria-label="Cocoon"><img src="uploads/cocoon-logo.png" alt="Cocoon" style="height:30px;width:auto;display:block"></a>
+
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px;background:#FFFDF8;border-radius:28px;padding:clamp(28px,5vw,40px);box-sizing:border-box">
+          <div style="display:flex;flex-direction:column;gap:8px;text-align:center">
+            <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:30px;color:#9C6240">Bienvenido a Mi Cocoon</h1>
+            <p style="margin:0;font-size:15px;line-height:1.5;color:#6D6D6D">Ingresa tu correo para acceder a tu familia.</p>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6D6D6D">CORREO ELECTRÓNICO
+            <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="ejemplo@correo.com" style="min-height:52px;padding:0 16px;border:1.5px solid rgba(58,50,43,.16);border-radius:14px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:16px;color:#3A322B;box-sizing:border-box">
+          </label>
+          <button type="button" onClick="{{ submitEmail }}" style="min-height:52px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer" style-hover="background:#3A322B">Continuar</button>
+          <p style="margin:0;font-size:13px;line-height:1.5;color:#6D6D6D;text-align:center">Demo: <strong>denise@ejemplo.com</strong> es una familia ya registrada.</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isNotFound }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px;background:#FFFDF8;border-radius:28px;padding:clamp(28px,5vw,40px);box-sizing:border-box;text-align:center">
+          <div style="font-family:'EB Garamond',serif;font-size:26px;line-height:1.2;color:#9C6240">No encontramos una familia asociada a este correo.</div>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:#6D6D6D">Si es tu primera vez en Cocoon, puedes crear tu familia en pocos pasos.</p>
+          <a href="./Reservar.dc.html" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;background:#9C6240;font-size:16px;font-weight:700;color:#FDFAF4">Crear mi familia Cocoon</a>
+          <button type="button" onClick="{{ backToLogin }}" style="border:0;background:none;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#6D6D6D;cursor:pointer">← Intentar con otro correo</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOtp }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:18px;background:#FFFDF8;border-radius:28px;padding:clamp(28px,5vw,40px);box-sizing:border-box">
+          <div style="display:flex;flex-direction:column;gap:8px;text-align:center">
+            <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:28px;color:#9C6240">Revisa tu correo</h1>
+            <p style="margin:0;font-size:15px;line-height:1.5;color:#6D6D6D">Enviamos un código de 6 dígitos a:<br><strong style="color:#3A322B">{{ email }}</strong></p>
+          </div>
+          <input type="text" inputmode="numeric" maxlength="6" value="{{ otp }}" onChange="{{ onOtp }}" placeholder="_ _ _ _ _ _" style="min-height:56px;padding:0 16px;border:1.5px solid {{ otpBorder }};border-radius:14px;background:#FDFAF4;font-family:Quicksand,sans-serif;font-size:22px;letter-spacing:.5em;text-align:center;color:#3A322B;box-sizing:border-box">
+          <sc-if value="{{ otpError }}" hint-placeholder-val="{{ false }}">
+            <p role="alert" style="margin:0;font-size:14px;color:#9C6240;text-align:center">{{ otpError }}</p>
+          </sc-if>
+          <button type="button" onClick="{{ submitOtp }}" style="min-height:52px;border:0;border-radius:999px;background:#9C6240;font-family:Quicksand,sans-serif;font-size:16px;font-weight:700;color:#FDFAF4;cursor:pointer" style-hover="background:#3A322B">{{ otpBtnLabel }}</button>
+          <div style="display:flex;align-items:center;justify-content:center;gap:18px">
+            <button type="button" onClick="{{ resendOtp }}" style="border:0;background:none;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#9C6240;cursor:pointer">Reenviar código</button>
+            <span style="color:rgba(58,50,43,.3)">·</span>
+            <button type="button" onClick="{{ backToLogin }}" style="border:0;background:none;font-family:Quicksand,sans-serif;font-size:14px;font-weight:600;color:#6D6D6D;cursor:pointer">Cambiar correo</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isPortal }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;min-height:100vh">
+    <div data-sidebar="" style="flex:0 0 248px;flex-direction:column;gap:4px;padding:24px 16px;background:#FFFDF8;border-right:1px solid rgba(58,50,43,.08);box-sizing:border-box">
+      <a href="Cocoon Home.dc.html" style="display:inline-flex;align-items:center;padding:8px 12px 20px" aria-label="Cocoon"><img src="uploads/cocoon-logo.png" alt="Cocoon" style="height:24px;width:auto;display:block"></a>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;color:#6D6D6D;padding:6px 12px 8px">MI COCOON</div>
+
+      <a href="#" onClick="{{ goSection('inicio') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgInicio }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>Inicio</a>
+      <a href="#" onClick="{{ goSection('familia') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgFamilia }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Mi familia</a>
+      <a href="#" onClick="{{ goSection('reservas') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgReservas }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg>Mis reservas</a>
+      <a href="#" onClick="{{ goSection('membresia') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgMembresia }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>Membresía</a>
+      <a href="#" onClick="{{ goSection('camaras') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgCamaras }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7 16 12l7 5V7Z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>Cámaras</a>
+      <a href="#" onClick="{{ goSection('cafe') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgCafe }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Cocoon Café</a>
+      <a href="#" onClick="{{ goSection('puntos') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgPuntos }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Puntos y beneficios</a>
+      <a href="#" onClick="{{ goSection('pagos') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgPagos }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Métodos de pago</a>
+      <a href="#" onClick="{{ goSection('waivers') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgWaivers }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>Documentos y Waivers</a>
+      <a href="#" onClick="{{ goSection('config') }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;font-size:14.5px;font-weight:600;background:{{ bgConfig }};color:#3A322B"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>Configuración</a>
+
+      <div style="flex:1"></div>
+      <button type="button" onClick="{{ logout }}" style="display:flex;align-items:center;gap:12px;padding:11px 12px;border:0;background:none;border-radius:14px;font-family:Quicksand,sans-serif;font-size:14.5px;font-weight:600;color:#6D6D6D;cursor:pointer;text-align:left"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Cerrar sesión</button>
+    </div>
+
+    <div data-main="" style="flex:1;min-width:0;padding:clamp(24px,3vw,48px);box-sizing:border-box">
+
+      <sc-if value="{{ isInicio }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:clamp(28px,3vw,40px)">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(28px,3.2vw,38px);color:#9C6240">Hola, {{ firstName }} 👋</h1>
+            <p style="margin:0;font-size:15.5px;color:#6D6D6D">Todo lo de tu familia Cocoon, en un solo lugar.</p>
+          </div>
+
+          <div data-cards4="" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px">
+            <div style="display:flex;flex-direction:column;gap:10px;padding:22px;background:#FFFDF8;border-radius:22px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">PRÓXIMA VISITA</div>
+              <sc-if value="{{ nextVisit }}" hint-placeholder-val="{{ true }}">
+                <div style="font-family:'EB Garamond',serif;font-size:22px;color:#3A322B">{{ nextVisit.dateLabel }}</div>
+                <div style="font-size:14px;color:#6D6D6D">{{ nextVisit.time }} · {{ nextVisit.kids }}</div>
+                <a href="#" onClick="{{ goSection('reservas') }}" style="margin-top:auto;font-size:14px;font-weight:700;color:#9C6240">Ver reserva →</a>
+              </sc-if>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;padding:22px;background:#FFFDF8;border-radius:22px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">MEMBRESÍA</div>
+              <div style="font-family:'EB Garamond',serif;font-size:20px;color:#3A322B">{{ membershipKid }}</div>
+              <div style="font-size:14px;color:#6D6D6D">{{ membershipLabel }} · {{ membershipStatus }}</div>
+              <div style="font-size:13px;color:#6D6D6D">Próxima renovación: {{ membershipRenewal }}</div>
+              <a href="#" onClick="{{ goSection('membresia') }}" style="margin-top:auto;font-size:14px;font-weight:700;color:#9C6240">Ver membresía →</a>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;padding:22px;background:#FFFDF8;border-radius:22px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">PUNTOS COCOON</div>
+              <div style="font-family:'EB Garamond',serif;font-size:26px;color:#3A322B">1,240 puntos</div>
+              <div style="height:6px;border-radius:999px;background:#EDE4D2;overflow:hidden"><div style="width:62%;height:100%;background:#D4A34E"></div></div>
+              <div style="font-size:12.5px;color:#6D6D6D">260 puntos para tu próximo beneficio</div>
+              <a href="#" onClick="{{ goSection('puntos') }}" style="margin-top:auto;font-size:14px;font-weight:700;color:#9C6240">Ver beneficios →</a>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;padding:22px;background:#FFFDF8;border-radius:22px">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">COCOON CAFÉ</div>
+              <div style="font-size:13px;color:#6D6D6D">Último pedido</div>
+              <div style="font-family:'EB Garamond',serif;font-size:20px;color:#3A322B">18 septiembre</div>
+              <div style="font-size:14px;color:#6D6D6D">$24.50</div>
+              <a href="#" onClick="{{ goSection('cafe') }}" style="margin-top:auto;font-size:14px;font-weight:700;color:#9C6240">Ver pedidos →</a>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="font-family:'EB Garamond',serif;font-size:24px;color:#9C6240">Tus pequeños</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+              <sc-for list="{{ kids }}" as="kid" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:10px;padding:20px;background:#FFFDF8;border-radius:22px">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:46px;height:46px;border-radius:999px;background:#EDE4D2;display:flex;align-items:center;justify-content:center;font-family:'EB Garamond',serif;font-size:18px;color:#9C6240">{{ kid.initial }}</div>
+                    <div>
+                      <div style="font-size:16px;font-weight:600;color:#3A322B">{{ kid.name }}</div>
+                      <div style="font-size:13px;color:#6D6D6D">{{ kid.age }}</div>
+                    </div>
+                  </div>
+                  <div style="font-size:13.5px;color:#6D6D6D">{{ kid.membershipLabel }}</div>
+                  <div style="font-size:13.5px;color:#3A322B">Waiver vigente ✓</div>
+                  <sc-if value="{{ kid.nextVisit }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:13px;color:#6D6D6D">Próxima visita: {{ kid.nextVisit }}</div>
+                  </sc-if>
+                  <a href="#" onClick="{{ goSection('familia') }}" style="font-size:14px;font-weight:700;color:#9C6240">Ver perfil →</a>
+                </div>
+              </sc-for>
+              <a href="./Reservar.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:120px;border:1.5px dashed rgba(58,50,43,.25);border-radius:22px;font-size:15px;font-weight:600;color:#9C6240">+ Agregar niño</a>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isFamilia }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:clamp(28px,3vw,40px)">
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(28px,3.2vw,38px);color:#9C6240">Mi familia</h1>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">ADULTO RESPONSABLE</div>
+            <div style="display:flex;flex-wrap:wrap;gap:24px;padding:22px;background:#FFFDF8;border-radius:22px">
+              <div><div style="font-size:12.5px;color:#6D6D6D">Nombre</div><div style="font-size:15.5px;font-weight:600;color:#3A322B">{{ adultName }}</div></div>
+              <div><div style="font-size:12.5px;color:#6D6D6D">Email</div><div style="font-size:15.5px;font-weight:600;color:#3A322B">{{ email }}</div></div>
+              <div><div style="font-size:12.5px;color:#6D6D6D">Teléfono</div><div style="font-size:15.5px;font-weight:600;color:#3A322B">{{ adultPhone }}</div></div>
+              <a href="#" onClick="{{ goSection('config') }}" style="margin-left:auto;align-self:center;font-size:14px;font-weight:700;color:#9C6240">Editar datos</a>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:#6D6D6D">NIÑOS</div>
+              <a href="./Reservar.dc.html" style="font-size:14px;font-weight:700;color:#9C6240">+ Agregar niño</a>
+            </div>
+            <sc-for list="{{ kidsFull }}" as="kid" hint-placeholder-count="2">
+              <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:20px;padding:22px;background:#FFFDF8;border-radius:22px">
+                <div style="width:56px;height:56px;flex:none;border-radius:999px;background:#EDE4D2;display:flex;align-items:center;justify-content:center;font-family:'EB Garamond',serif;font-size:22px;color:#9C6240">{{ kid.initial }}</div>
+                <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:4px">
+                  <div style="font-size:17px;font-weight:600;color:#3A322B">{{ kid.name }}</div>
+                  <div style="font-size:13.5px;color:#6D6D6D">Nacimiento: {{ kid.birth }} · {{ kid.age }}</div>
+                  <div style="font-size:13.5px;color:#6D6D6D">{{ kid.membershipLabel }}</div>
+                  <div style="font-size:13.5px;color:#3A322B">Waiver vigente ✓</div>
+                  <sc-if value="{{ kid.nextVisit }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:13.5px;color:#6D6D6D">Próxima visita: {{ kid.nextVisit }}</div>
+                  </sc-if>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+                  <a href="#" style="font-size:14px;font-weight:700;color:#9C6240">Editar datos</a>
+                  <a href="#" onClick="{{ goSection('waivers') }}" style="font-size:14px;font-weight:600;color:#6D6D6D">Ver waiver</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isReservas }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(28px,3.2vw,38px);color:#9C6240">Mis reservas</h1>
+          <div style="display:flex;gap:8px">
+            <button type="button" onClick="{{ setTab('proximas') }}" style="padding:10px 18px;border:0;border-radius:999px;font-family:Quicksand,sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;background:{{ tabBgProx }};color:{{ tabColProx }}">Próximas</button>
+            <button type="button" onClick="{{ setTab('pasadas') }}" style="padding:10px 18px;border:0;border-radius:999px;font-family:Quicksand,sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;background:{{ tabBgPast }};color:{{ tabColPast }}">Pasadas</button>
+            <button type="button" onClick="{{ setTab('canceladas') }}" style="padding:10px 18px;border:0;border-radius:999px;font-family:Quicksand,sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;background:{{ tabBgCanc }};color:{{ tabColCanc }}">Canceladas</button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ filteredReservations }}" as="r" hint-placeholder-count="2">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:20px;background:#FFFDF8;border-radius:20px">
+                <div style="min-width:150px">
+                  <div style="font-size:16px;font-weight:600;color:#3A322B">{{ r.dateLabel }}</div>
+                  <div style="font-size:13.5px;color:#6D6D6D">{{ r.time }}</div>
+                </div>
+                <div style="font-size:14px;color:#6D6D6D;flex:1 1 140px">{{ r.kids }}</div>
+                <div style="font-size:14px;color:#3A322B;flex:0 0 auto">{{ r.type }}</div>
+                <div style="font-size:14px;font-weight:600;color:#3A322B;flex:0 0 auto">{{ r.price }}</div>
+                <div style="font-size:12.5px;font-weight:700;letter-spacing:.06em;padding:6px 12px;border-radius:999px;background:{{ r.statusBg }};color:{{ r.statusCol }};flex:0 0 auto">{{ r.statusLabel }}</div>
+                <a href="#" onClick="{{ r.open }}" style="font-size:14px;font-weight:700;color:#9C6240;flex:0 0 auto">Ver detalle →</a>
+              </div>
+            </sc-for>
+            <sc-if value="{{ emptyReservations }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:32px;text-align:center;background:#FFFDF8;border-radius:20px;font-size:15px;color:#6D6D6D">No hay reservas en esta categoría.</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMembresia }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:clamp(24px,3vw,36px)">
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(28px,3.2vw,38px);color:#9C6240">Membresía</h1>
+          <sc-for list="{{ membershipCards }}" as="m" hint-placeholder-count="1">
+            <div style="display:flex;flex-direction:column;gap:14px;padding:22px;background:#FFFDF8;border-radius:22px">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+                <div>
+                  <div style="font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#9C6240">FOUNDING MEMBERSHIP</div>
+                  <div style="font-family:'EB Garamond',serif;font-size:22px;color:#3A322B;margin-top:4px">{{ m.name }}</div>
+                </div>
+                <div style="padding:6px 14px;border-radius:999px;background:rgba(186,178,90,.22);font-size:12.5px;font-weight:700;color:#3A322B">Activa</div>
+              </div>
+              <div style="font-size:13.5px;color:#6D6D6D">Próxima renovación: {{ m.next }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+                <a href="#" style="padding:9px 16px;border-radius:999px;border:1px solid rgba(58,50,43,.2);font-size:13.5px;font-weight:600;color:#3A322B">Gestionar membresía</a>
+                <a href="#" style="padding:9px 16px;border-radius:999px;border:1px solid rgba(58,50,43,.2);font-size:13.5px;font-weight:600;color:#3A322B">Actualizar método de pago</a>
+                <a href="Membresias.dc.html" style="padding:9px 16px;border-radius:999px;border:1px solid rgba(58,50,43,.2);font-size:13.5px;font-weight:600;color:#3A322B">Ver beneficios</a>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noMemberships }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start;padding:22px;background:#FFFDF8;border-radius:22px">
+              <p style="margin:0;font-size:15px;color:#6D6D6D">Ninguno de tus pequeños tiene la membresía activa todavía.</p>
+              <a href="./Activar Membresia.dc.html" style="display:inline-flex;align-items:center;height:48px;padding:0 24px;border-radius:999px;background:#9C6240;font-size:15px;font-weight:700;color:#FDFAF4">Quiero ser Founding Member</a>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPlaceholder }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:10px">
+          <h1 style="margin:0;font-family:'EB Garamond',serif;font-weight:500;font-size:clamp(26px,3vw,34px);color:#9C6240">{{ placeholderTitle }}</h1>
+          <p style="margin:0;font-size:15px;color:#6D6D6D">Esta sección estará disponible pronto.</p>
+          <a href="#" onClick="{{ goSection('inicio') }}" style="margin-top:8px;font-size:14px;font-weight:700;color:#9C6240">← Volver a Inicio</a>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ activeReservation }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeReservation }}" style="position:fixed;inset:0;z-index:2000;background:rgba(58,50,43,.55);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box">
+      <div onClick="{{ stopClick }}" style="position:relative;width:min(520px,100%);max-height:88vh;overflow-y:auto;background:#F5ECDA;border-radius:26px;padding:clamp(26px,4vw,36px);box-sizing:border-box">
+        <button type="button" onClick="{{ closeReservation }}" aria-label="Cerrar" style="position:absolute;top:18px;right:18px;width:36px;height:36px;border:0;border-radius:999px;background:#EDE4D2;color:#3A322B;cursor:pointer;font-size:17px">✕</button>
+        <div style="font-family:'EB Garamond',serif;font-size:26px;color:#9C6240;margin-bottom:16px">Detalle de reserva</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:18px">
+          <div><div style="font-size:12px;color:#6D6D6D">Fecha</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.dateLabel }}</div></div>
+          <div><div style="font-size:12px;color:#6D6D6D">Hora</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.time }}</div></div>
+          <div><div style="font-size:12px;color:#6D6D6D">Niños</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.kids }}</div></div>
+          <div><div style="font-size:12px;color:#6D6D6D">Tipo de acceso</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.type }}</div></div>
+          <div><div style="font-size:12px;color:#6D6D6D">Precio</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.price }}</div></div>
+          <div><div style="font-size:12px;color:#6D6D6D">Estado</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.statusLabel }}</div></div>
+          <div><div style="font-size:12px;color:#6D6D6D">Referencia</div><div style="font-size:15px;font-weight:600;color:#3A322B">{{ activeReservation.ref }}</div></div>
+        </div>
+        <sc-if value="{{ activeReservation.qr }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;background:#FFFDF8;border-radius:18px;margin-bottom:14px">
+            <div style="width:120px;height:120px;background:#EDE4D2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#6D6D6D;text-align:center">código QR</div>
+            <div style="font-size:13px;color:#6D6D6D">Muestra este código al llegar</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <div data-bottomnav="" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:#FFFDF8;border-top:1px solid rgba(58,50,43,.1);padding:8px 8px calc(8px + env(safe-area-inset-bottom));box-sizing:border-box">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">
+      <a href="#" onClick="{{ goSection('inicio') }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:44px;font-size:11.5px;font-weight:600;color:{{ navColInicio }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>Inicio</a>
+      <a href="#" onClick="{{ goSection('reservas') }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:44px;font-size:11.5px;font-weight:600;color:{{ navColReservas }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M3 10h18"/></svg>Reservas</a>
+      <a href="#" onClick="{{ goSection('familia') }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:44px;font-size:11.5px;font-weight:600;color:{{ navColFamilia }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg>Familia</a>
+      <a href="#" onClick="{{ goSection('cafe') }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:44px;font-size:11.5px;font-weight:600;color:{{ navColCafe }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>Café</a>
+      <button type="button" onClick="{{ toggleMore }}" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:44px;border:0;background:none;font-family:Quicksand,sans-serif;font-size:11.5px;font-weight:600;color:{{ navColMore }};cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Más</button>
+    </div>
+    <sc-if value="{{ moreOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:2px;padding:10px 4px 4px;border-top:1px solid rgba(58,50,43,.1);margin-top:8px">
+        <a href="#" onClick="{{ goSection('membresia') }}" style="padding:12px;font-size:15px;font-weight:600;color:#3A322B">Membresía</a>
+        <a href="#" onClick="{{ goSection('camaras') }}" style="padding:12px;font-size:15px;font-weight:600;color:#3A322B">Cámaras</a>
+        <a href="#" onClick="{{ goSection('puntos') }}" style="padding:12px;font-size:15px;font-weight:600;color:#3A322B">Puntos</a>
+        <a href="#" onClick="{{ goSection('pagos') }}" style="padding:12px;font-size:15px;font-weight:600;color:#3A322B">Pagos</a>
+        <a href="#" onClick="{{ goSection('waivers') }}" style="padding:12px;font-size:15px;font-weight:600;color:#3A322B">Waivers</a>
+        <a href="#" onClick="{{ goSection('config') }}" style="padding:12px;font-size:15px;font-weight:600;color:#3A322B">Configuración</a>
+        <button type="button" onClick="{{ logout }}" style="padding:12px;border:0;background:none;text-align:left;font-family:Quicksand,sans-serif;font-size:15px;font-weight:600;color:#6D6D6D;cursor:pointer">Cerrar sesión</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+const DEMO_FAMILY = {
+  name: 'Denise Rodríguez',
+  email: 'denise@ejemplo.com',
+  phone: '+507 6000-0000',
+  membership: { label: 'Founding Member', active: true, discount: .2, until: 'diciembre 2026' },
+  waiverUntil: 'marzo 2027',
+  kids: [
+    { name: 'Charlie', birth: '12 mayo 2022', age: '4 años', membershipLabel: 'Founding Member', nextVisit: '26 Sep · 10:00 AM' },
+    { name: 'Tobías', birth: '3 marzo 2024', age: '2 años', membershipLabel: 'Sin membresía', nextVisit: '26 Sep · 10:00 AM' }
+  ]
+};
+const RESERVATIONS = [
+  { id: 'r1', status: 'proximas', dateLabel: 'Sábado 26 septiembre', time: '10:00 AM', kids: 'Charlie + Tobías', type: 'Day Pass', price: '$45.00', qr: true, ref: 'CN-4K92T', statusLabel: 'Confirmada', statusBg: 'rgba(186,178,90,.22)', statusCol: '#6b6a2e' },
+  { id: 'r2', status: 'pasadas', dateLabel: 'Viernes 19 septiembre', time: '2:00 PM', kids: 'Charlie', type: 'Day Pass', price: '$25.00', qr: false, ref: 'CN-3J81P', statusLabel: 'Completada', statusBg: 'rgba(156,180,199,.28)', statusCol: '#3A322B' },
+  { id: 'r3', status: 'canceladas', dateLabel: 'Martes 8 septiembre', time: '11:00 AM', kids: 'Tobías', type: 'Membresía', price: '$0.00', qr: false, ref: 'CN-2H55Q', statusLabel: 'Cancelada', statusBg: 'rgba(156,98,64,.16)', statusCol: '#9C6240' }
+];
+
+class Component extends DCLogic {
+  state = { authView: 'login', email: '', otp: '', otpError: '', otpSending: false, section: 'inicio', tab: 'proximas', activeResId: null, moreOpen: false };
+
+  loadSession() { try { const r = localStorage.getItem('cocoon_session'); return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+  saveSession(s) { try { localStorage.setItem('cocoon_session', JSON.stringify(s)); } catch (e) {} }
+  clearSession() { try { localStorage.removeItem('cocoon_session'); } catch (e) {} }
+
+  componentDidMount() {
+    const s = this.loadSession();
+    if (s) this.setState({ authView: 'portal' });
+  }
+
+  submitEmail() {
+    const email = this.state.email.trim().toLowerCase();
+    if (email === 'denise@ejemplo.com') {
+      this.setState({ authView: 'otp', otpError: '' });
+    } else {
+      this.setState({ authView: 'notfound' });
+    }
+  }
+  submitOtp() {
+    if (this.state.otp.length !== 6) { this.setState({ otpError: 'Ingresa el código de 6 dígitos.' }); return; }
+    this.setState({ otpSending: true, otpError: '' });
+    setTimeout(() => {
+      this.saveSession(DEMO_FAMILY);
+      this.setState({ authView: 'portal', otpSending: false });
+    }, 500);
+  }
+  logout() { this.clearSession(); this.setState({ authView: 'login', email: '', otp: '', section: 'inicio' }); }
+
+  renderVals() {
+    const st = this.state;
+    const session = this.loadSession() || DEMO_FAMILY;
+    const memberships = this.loadMemberships ? this.loadMemberships() : (() => { try { const r = localStorage.getItem('cocoon_memberships'); return r ? JSON.parse(r) : {}; } catch (e) { return {}; } })();
+    const firstName = (session.name || 'Denise').split(' ')[0];
+    const secMap = { inicio: 'bgInicio', familia: 'bgFamilia', reservas: 'bgReservas', membresia: 'bgMembresia', camaras: 'bgCamaras', cafe: 'bgCafe', puntos: 'bgPuntos', pagos: 'bgPagos', waivers: 'bgWaivers', config: 'bgConfig' };
+    const tint = 'rgba(156,98,64,.12)';
+    const bg = {}; Object.keys(secMap).forEach(k => bg[secMap[k]] = st.section === k ? tint : 'transparent');
+    const knownSections = ['inicio', 'familia', 'reservas'];
+    const activeRes = RESERVATIONS.find(r => r.id === st.activeResId) || null;
+    const kids = session.kids || [];
+
+    return {
+      isAuthScreen: st.authView !== 'portal',
+      isLogin: st.authView === 'login',
+      isNotFound: st.authView === 'notfound',
+      isOtp: st.authView === 'otp',
+      isPortal: st.authView === 'portal',
+      email: st.authView === 'portal' ? session.email : st.email,
+      onEmail: e => this.setState({ email: e.target.value }),
+      submitEmail: () => this.submitEmail(),
+      backToLogin: () => this.setState({ authView: 'login', otp: '', otpError: '' }),
+      otp: st.otp,
+      onOtp: e => this.setState({ otp: e.target.value.replace(/\D/g, '').slice(0, 6) }),
+      otpBorder: st.otpError ? '#9C6240' : 'rgba(58,50,43,.16)',
+      otpError: st.otpError,
+      otpBtnLabel: st.otpSending ? 'Entrando…' : 'Entrar a Mi Cocoon',
+      submitOtp: () => this.submitOtp(),
+      resendOtp: () => this.setState({ otp: '', otpError: '' }),
+
+      ...bg,
+      goSection: name => () => this.setState({ section: name, activeResId: null, moreOpen: false }),
+      logout: () => this.logout(),
+      firstName,
+      isInicio: st.section === 'inicio',
+      isFamilia: st.section === 'familia',
+      isReservas: st.section === 'reservas',
+      isMembresia: st.section === 'membresia',
+      isPlaceholder: !knownSections.includes(st.section) && st.section !== 'membresia',
+      placeholderTitle: { membresia: 'Membresía', camaras: 'Cámaras', cafe: 'Cocoon Café', puntos: 'Puntos y beneficios', pagos: 'Métodos de pago', waivers: 'Documentos y Waivers', config: 'Configuración' }[st.section] || '',
+
+      nextVisit: RESERVATIONS.find(r => r.status === 'proximas') || null,
+      membershipKid: kids[0] ? kids[0].name : '',
+      membershipLabel: session.membership ? session.membership.label : 'Founding Member',
+      membershipStatus: session.membership && session.membership.active ? 'Activa' : 'Inactiva',
+      membershipRenewal: '20 octubre',
+
+      kids: kids.map(k => ({ name: k.name, initial: k.name[0], age: k.age, membershipLabel: k.membershipLabel, nextVisit: k.nextVisit })),
+      kidsFull: kids.map(k => ({ name: k.name, initial: k.name[0], age: k.age, birth: k.birth, membershipLabel: k.membershipLabel, nextVisit: k.nextVisit })),
+      membershipCards: kids.filter(k => memberships[k.name]).map(k => ({ name: k.name, next: memberships[k.name].next })),
+      noMemberships: !kids.some(k => memberships[k.name]),
+
+      adultName: session.name,
+      adultPhone: session.phone,
+
+      tab: st.tab,
+      setTab: t => () => this.setState({ tab: t }),
+      tabBgProx: st.tab === 'proximas' ? '#9C6240' : '#EDE4D2', tabColProx: st.tab === 'proximas' ? '#FDFAF4' : '#3A322B',
+      tabBgPast: st.tab === 'pasadas' ? '#9C6240' : '#EDE4D2', tabColPast: st.tab === 'pasadas' ? '#FDFAF4' : '#3A322B',
+      tabBgCanc: st.tab === 'canceladas' ? '#9C6240' : '#EDE4D2', tabColCanc: st.tab === 'canceladas' ? '#FDFAF4' : '#3A322B',
+      filteredReservations: RESERVATIONS.filter(r => r.status === st.tab).map(r => ({ ...r, open: () => this.setState({ activeResId: r.id }) })),
+      emptyReservations: RESERVATIONS.filter(r => r.status === st.tab).length === 0,
+
+      activeReservation: activeRes,
+      closeReservation: () => this.setState({ activeResId: null }),
+      stopClick: e => e.stopPropagation(),
+
+      moreOpen: st.moreOpen,
+      toggleMore: () => this.setState(p => ({ moreOpen: !p.moreOpen })),
+      navColInicio: st.section === 'inicio' ? '#9C6240' : '#6D6D6D',
+      navColReservas: st.section === 'reservas' ? '#9C6240' : '#6D6D6D',
+      navColFamilia: st.section === 'familia' ? '#9C6240' : '#6D6D6D',
+      navColCafe: st.section === 'cafe' ? '#9C6240' : '#6D6D6D',
+      navColMore: st.moreOpen ? '#9C6240' : '#6D6D6D'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
